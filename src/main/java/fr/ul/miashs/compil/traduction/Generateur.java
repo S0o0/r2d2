@@ -189,13 +189,13 @@ public class Generateur {
                     code.append(genererAppel(ap);
                 case ECR:
                     Ecrire e = (Ecrire) instruction;
-                    //code.append(genererEcriture(e));
+                    code.append(genererEcriture(e));
                 case SI:
                     Si  si = (Si) instruction;
-                    //code.append(genererSi(si));
+                    code.append(genererSi(si));
                 case TQ:
                     TantQue  tq = (TantQue) instruction;
-                    //code.append(genererTantQue(tq));
+                    code.append(genererTq(tq));
                 case RET:
                     Retour ret =  (Retour) instruction;
                     code.append(genererRetour(ret));
