@@ -267,7 +267,7 @@ public class Generateur {
             code.append(genererExpression(((Superieur) condition).getFilsDroit()));
             code.append("\tPOP(R1)\n");
             code.append("\tPOP(R2)\n");
-            code.append("\tCMP(R2,R1,R3)\n");
+            code.append("\tCMPLT(R2,R1,R3)\n");
             code.append("\tPUSH(R3)\n");
         }
         // 2) cas où inférieur
@@ -286,7 +286,7 @@ public class Generateur {
 
     public String genererTq (TantQue tq){
         StringBuffer code = new StringBuffer();
-        code.append("\TQ_"+tq.getValeur()+" :\n");
+        code.append("\tTQ_"+tq.getValeur()+" :\n");
         code.append(genererCondition(tq.getFilsGauche())); // il faut le fils gauche car le fils gauche
         // d'un tant que est la condition
         code.append("\tPOP(R1)\n");
@@ -302,14 +302,14 @@ public class Generateur {
 
 
 //Exemple 7 (en C)
-int a = 1;
-int b = 2;
-int x;
-
-void main(){
-    if (a > b){
-        x = 1000;
-    }else{
-        x = 2000;
-    }
+//int a = 1;
+//int b = 2;
+//int x;
+//
+//void main(){
+//    if (a > b){
+//        x = 1000;
+//    }else{
+//        x = 2000;
+//    }
 }
