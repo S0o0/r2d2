@@ -281,7 +281,7 @@ public class Generateur {
         // 5) cas où inférieur ou égal
 
         // 6) cas où supérieur ou égal
-
+        return  code.toString();
     }
 
     public String genererTq (TantQue tq){
