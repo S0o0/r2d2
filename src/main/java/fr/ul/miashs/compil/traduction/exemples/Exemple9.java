@@ -59,8 +59,8 @@ public class Exemple9 {
         //Affectation du symbole
         Table table = new Table();
         Symbole s1 = new Symbole("main","void","fonction",0,0,0);
-        Symbole s2 = new Symbole("i","int","global",0,0,0);
-        Symbole s3 = new Symbole("x","int","global",0,0,0);
+        Symbole s2 = new Symbole("f","int","fonction",0,1,0);
+        Symbole s3 = new Symbole("a","int","param",0,0,0);
         table.put(s1.getNom(), s1);
         table.put(s2.getNom(), s2);
         table.put(s3.getNom(), s3);
@@ -68,7 +68,8 @@ public class Exemple9 {
 
         //Faire pointer les noeuds aux symboles (avec le setter de NoeudObj)
         main.setValeur(s1);
-        i.setValeur(s2);
+        f.setValeur(s2);
+        a.setValeur(s3);
 
 
         //afficher de deux manières
