@@ -45,7 +45,7 @@ public class Exemple4 {
         //Affectation du symbole
         Table table = new Table();
         Symbole s1 = new Symbole("main","void","fonction",0,0,0);
-        Symbole s2 = new Symbole("res","int","global",0,0,1);
+        Symbole s2 = new Symbole("res","int","global",0,0,0);
         table.put(s1.getNom(), s1);
         table.put(s2.getNom(), s2);
 
