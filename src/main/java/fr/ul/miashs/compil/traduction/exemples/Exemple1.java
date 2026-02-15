@@ -11,10 +11,10 @@ public class Exemple1 {
         prog.ajouterUnFils(main);
 
         //Affectation du symbole
-        //Faire pointer les noeuds aux symboles (avec le setter de NoeudObj)
         Table table = new Table();
         Symbole s = new Symbole("main","void","fonction",0,0,0);
         table.put(s.getNom(),s);
+        //Faire pointer les noeuds aux symboles (avec le setter de NoeudObj)
         main.setValeur(s);
 
         //afficher de deux manières
