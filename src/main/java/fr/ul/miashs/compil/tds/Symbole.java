@@ -7,6 +7,8 @@ public class Symbole {
     int valeur;
     int nb_param;
     int nb_var_loc;
+    int rang;
+    String scope;
 
     public Symbole(String nom, String type, String categorie, int valeur, int nb_param, int nb_var_loc){
         this.nom = nom;
@@ -15,6 +17,17 @@ public class Symbole {
         this.valeur = valeur;
         this.nb_param = nb_param;
         this.nb_var_loc = nb_var_loc;
+    }
+    // Constructeur pour exemple 6 et plus
+    public Symbole(String nom, String type, String categorie, int valeur, int nb_param, int nb_var_loc, int rang, String scope){
+        this.nom = nom;
+        this.type = type;
+        this.categorie = categorie;
+        this.valeur = valeur;
+        this.nb_param = nb_param;
+        this.nb_var_loc = nb_var_loc;
+        this.rang = rang;
+        this.scope = scope;
     }
 
     public String getNom(){
@@ -31,4 +44,6 @@ public class Symbole {
     }
     public int getNb_param(){return nb_param;}
     public int getNbVarLoc(){return nb_var_loc;}
+    public int getRang(){return rang;}
+    public String getScope(){return scope;}
 }

@@ -42,17 +42,23 @@ public class Generateur {
                 break;
             case IDF:
                 Idf i = (Idf) expr;
-                switch (i.getCat()){
+                Symbole s = (Symbole) i.getValeur();
+                int offset;
+                switch (s.getCategorie()){
                     case "global":
-                        code.append("\tCMOVE(R0, " + i.getValeur() + ")\n");
+                        code.append("\tCMOVE(R0, " + s.getValeur() + ")\n");
                         code.append("\tPUSH(R0)\n");
+                        break;
                     case "param":
-                        offset = 1 + i.getValeur().getNb_param() + i.getValeur().getRang();
+                        offset = 1 + s.getNb_param() + s.getRang();
                         code.append("GETFRAME("+offset * -4+",R0)");
                         code.append("\tPUSH(R0)\n");
+                        break;
                     case "locale":
-                        //
-                        
+                        offset = -1 - s.getRang();
+                        code.append("\tGETFRAME(" + (offset*4) + ",R0)\n");
+                        code.append("\tPUSH(R0)\n");
+                        break;
                 }
                 
                 break;
@@ -140,7 +146,7 @@ public class Generateur {
     public String genererData(Table tds){
         StringBuffer code = new StringBuffer();
         for (Symbole s : tds.values()){
-            if (s.getCategorie() == "global"){
+            if ("global".equals(s.getCategorie())){
                 code.append("\t"+s.getNom()+": LONG("+s.getValeur()+")\n");
             }
         }
@@ -158,12 +164,14 @@ public class Generateur {
         code.append("\tPUSH(LP)\n");
         code.append("\tPUSH(BP)\n");
         code.append("\tMOVE(SP,BP)\n");
-        code.append("\tALLOCATE(+"+fonction.getValeur().getNbVarLoc()+")\n");
+        // On parse en symbole pour avoir accès à nb_var_loc
+        code.append("\tALLOCATE(+"+((Symbole)fonction.getValeur()).getNbVarLoc()+")\n");
         for  (Noeud fils : fonction.getFils()) {
             code.append(genererInstruction(fils));
         }
         code.append("\tret_"+fonction.getValeur()+"\n");
-        code.append("\tDEALLOCATE(+"+fonction.getValeur().getNbVarLoc()+")\n");
+        // idem
+        code.append("\tDEALLOCATE(+"+((Symbole)fonction.getValeur()).getNbVarLoc()+")\n");
         code.append("\tPOP(BP)\n");
         code.append("\tPOP(LP)\n");
         code.append("\tRTN()\n");
@@ -212,9 +220,9 @@ public class Generateur {
     }
 
 
-    public String genererEcriture(Noeud a){
+    public String genererEcriture(Ecrire e){
         StringBuffer code = new StringBuffer();;
-        code.append(genererExpression(a.getFils()));
+        code.append(genererExpression(e.getLeFils()));
         code.append("\tPOP(R0):\n");
         code.append("\tWRINT()\n");
         return code.toString();
@@ -230,14 +238,15 @@ public class Generateur {
             code.append(genererExpression(fils));
         }
         code.append("\tCALL(+"+a.getLabel()+")\n"); //nom de la fonction
-        code.append("\tDEALLOCATE("+a.getValeur().getNb_param()+")\n");
+        code.append("\tDEALLOCATE("+((Symbole)a.getValeur()).getNb_param()+")\n");
         return code.toString();
     }
 
     public String genererRetour(Retour retour){
         StringBuffer code = new StringBuffer();
+        int offset;
         code.append(genererExpression(retour.getLeFils()));
-        offset.append(2+retour.getValeur().getNbParam()); //BP
+        offset = 2 + ((Symbole)retour.getValeur()).getNb_param(); // BP
         code.append("\tPOP(R0)\n");
         code.append("\tPUTFRAME(R0,"+offset * 4+")\n");
         code.append("\tBR(ret_"+retour.getValeur()+")\n");
@@ -247,13 +256,14 @@ public class Generateur {
     public String genererSi(Si si){
         StringBuffer code = new StringBuffer();
         code.append("\tSI"+si.getValeur()+" :\n");
-        code.append(genererCondition(fils1(si)));
+        // On parse la condition car getCondition retourne un Noeud
+        code.append(genererCondition((Condition)si.getCondition()));
         code.append("\tPOP(R0)\n");
         code.append("\tBF(R0,SINON_"+si.getValeur()+")\n");
-        code.append(genererBloc(fils2(si)));
+        code.append(genererBloc(si.getBlocAlors()));
         code.append("\tBR(FSI_"+si.getValeur()+")\n");
         code.append("\tSINON_"+si.getValeur()+" :\n");
-        code.append(genererBloc(fils3(si)));
+        code.append(genererBloc(si.getBlocSinon()));
         code.append("FSI_"+si.getValeur()+" :\n");
         return code.toString();
     }
@@ -279,7 +289,7 @@ public class Generateur {
         }
         // 2) cas où inférieur
         if (condition instanceof Inferieur) {
-
+//
         }
         // 3) cas où égal
 
@@ -294,12 +304,10 @@ public class Generateur {
     public String genererTq (TantQue tq){
         StringBuffer code = new StringBuffer();
         code.append("\tTQ_"+tq.getValeur()+" :\n");
-        code.append(genererCondition(tq.getFilsGauche())); // il faut le fils gauche car le fils gauche
-        // d'un tant que est la condition
+        code.append(genererCondition((Condition)tq.getCondition()));
         code.append("\tPOP(R1)\n");
         code.append("\tBF(FTQ_"+tq.getValeur()+")\n");
-        code.append(genererBloc(tq.getFilsDroit()));// il faut le fils droit car le fils gauche
-        // d'un tant que est la condition
+        code.append(genererBloc(tq.getBloc()));
         code.append("\tBR(TQ_"+tq.getValeur() + ")\n");
         code.append("\tFTQ_"+tq.getValeur() + " :\n");
 
