@@ -8,6 +8,14 @@ public class Symbole {
     int nb_param;
     int nb_var_loc;
 
+    public Symbole(String nom, String type, String categorie, int valeur, int nb_param, int nb_var_loc){
+        this.nom = nom;
+        this.type = type;
+        this.categorie = categorie;
+        this.valeur = valeur;
+        this.nb_param = nb_param;
+        this.nb_var_loc = nb_var_loc;
+    }
 
     public String getNom(){
         return nom;

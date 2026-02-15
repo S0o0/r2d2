@@ -158,12 +158,12 @@ public class Generateur {
         code.append("\tPUSH(LP)\n");
         code.append("\tPUSH(BP)\n");
         code.append("\tMOVE(SP,BP)\n");
-        code.append("\tALLOCATE(+"+fonction.getValeur().getNbVarLoc()+"\n");
+        code.append("\tALLOCATE(+"+fonction.getValeur().getNbVarLoc()+")\n");
         for  (Noeud fils : fonction.getFils()) {
             code.append(genererInstruction(fils));
         }
         code.append("\tret_"+fonction.getValeur()+"\n");
-        code.append("\tDEALLOCATE(+"+fonction.getValeur().getNbVarLoc()+"\n");
+        code.append("\tDEALLOCATE(+"+fonction.getValeur().getNbVarLoc()+")\n");
         code.append("\tPOP(BP)\n");
         code.append("\tPOP(LP)\n");
         code.append("\tRTN()\n");
@@ -184,24 +184,31 @@ public class Generateur {
                 case AFF:
                     Affectation a = (Affectation) instruction;
                     code.append(genererAffectation(a));
+                    break;
                 case APPEL:
                     Appel ap = (Appel) instruction;
-                    code.append(genererAppel(ap);
+                    code.append(genererAppel(ap));
+                    break;
                 case ECR:
                     Ecrire e = (Ecrire) instruction;
                     code.append(genererEcriture(e));
+                    break;
                 case SI:
                     Si  si = (Si) instruction;
                     code.append(genererSi(si));
+                    break;
                 case TQ:
                     TantQue  tq = (TantQue) instruction;
                     code.append(genererTq(tq));
+                    break;
                 case RET:
                     Retour ret =  (Retour) instruction;
                     code.append(genererRetour(ret));
+                    break;
             }
-            return code.toString();
+
         }
+        return code.toString();
     }
 
 
@@ -216,13 +223,13 @@ public class Generateur {
 
     public String genererAppel(Appel a){
         StringBuffer code = new StringBuffer();
-        if (a.valeur.type != void){
+        if (a.getValeur() != null){
             code.append("\tALLOCATE(1)\n");
         }
         for (Noeud fils : a.getFils()) {
             code.append(genererExpression(fils));
         }
-        code.append("\tCALL(+"+a.getValeur().nom+"\n"); //nom de la fonction
+        code.append("\tCALL(+"+a.getLabel()+")\n"); //nom de la fonction
         code.append("\tDEALLOCATE("+a.getValeur().getNb_param()+")\n");
         return code.toString();
     }
@@ -232,7 +239,7 @@ public class Generateur {
         code.append(genererExpression(retour.getLeFils()));
         offset.append(2+retour.getValeur().getNbParam()); //BP
         code.append("\tPOP(R0)\n");
-        code.append("\tPUTFRAME(R0,"+offset * 4+")");
+        code.append("\tPUTFRAME(R0,"+offset * 4+")\n");
         code.append("\tBR(ret_"+retour.getValeur()+")\n");
         return code.toString();
     }
@@ -290,7 +297,7 @@ public class Generateur {
         code.append(genererCondition(tq.getFilsGauche())); // il faut le fils gauche car le fils gauche
         // d'un tant que est la condition
         code.append("\tPOP(R1)\n");
-        code.append("\tBF(FTQ_"+tq.getValeur()+"\n");
+        code.append("\tBF(FTQ_"+tq.getValeur()+")\n");
         code.append(genererBloc(tq.getFilsDroit()));// il faut le fils droit car le fils gauche
         // d'un tant que est la condition
         code.append("\tBR(TQ_"+tq.getValeur() + ")\n");
@@ -312,4 +319,3 @@ public class Generateur {
 //    }else{
 //        x = 2000;
 //    }
-}

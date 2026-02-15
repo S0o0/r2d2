@@ -35,7 +35,7 @@ import fr.ul.miashs.compil.arbre.*;
 /**
  * Exemple #1
  */
-public class Exemple1 {
+public class    Exemple1 {
     public static void main(String[] args) {
         //création d'un arbre
         Noeud prog = new Prog();

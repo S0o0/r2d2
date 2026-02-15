@@ -2,7 +2,7 @@ package fr.ul.miashs.compil.tds;
 
 import java.util.HashMap;
 
-public class Table extends HashMap<Integer, Symbole>{
+public class Table extends HashMap<String, Symbole>{
     //main
     //a
     //b
