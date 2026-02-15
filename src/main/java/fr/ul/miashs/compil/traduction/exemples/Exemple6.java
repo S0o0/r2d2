@@ -14,7 +14,7 @@ public class Exemple6 {
         //fonction f
         Affectation affectation = new Affectation();
         f.ajouterUnFils(affectation);
-        Retour retour = new Retour("retour");
+        Retour retour = new Retour("retour"); // jsp si c'est retour qu'il faut mettre
         f.ajouterUnFils(retour);
         //affectation
         Idf res = new Idf("res");

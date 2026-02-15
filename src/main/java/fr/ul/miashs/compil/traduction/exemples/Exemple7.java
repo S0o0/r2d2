@@ -29,16 +29,15 @@ public class Exemple7 {
         Affectation affectation1 = new Affectation();
         bloc1.ajouterUnFils(affectation1);
         //affectation1
-        Idf x1 = new Idf(0);
-        affectation1.ajouterUnFils(x1);
+        Idf x = new Idf(0);
+        affectation1.ajouterUnFils(x);
         Const constante1 = new Const(1000);
         affectation1.ajouterUnFils(constante1);
         //bloc2
         Affectation affectation2 = new Affectation();
         bloc2.ajouterUnFils(affectation2);
         //affectation2
-        Idf x2 = new Idf(0);
-        affectation2.ajouterUnFils(x2);
+        affectation2.ajouterUnFils(x);
         Const constante2 = new Const(2000);
         affectation2.ajouterUnFils(constante2);
 
@@ -58,8 +57,7 @@ public class Exemple7 {
         main.setValeur(s1);
         a.setValeur(s2);
         b.setValeur(s3);
-        x1.setValeur(s4);
-        x2.setValeur(s4); //jsp si faut le mettre aux deux x mais je pense
+        x.setValeur(s4);
 
         //afficher de deux manières
         TxtAfficheur.afficher(prog);
