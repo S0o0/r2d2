@@ -7,4 +7,6 @@ public class Table extends HashMap<String, Symbole>{
     //a
     //b
     //x
+
+    // S'assurer qu'on puisse ajouter, supprimer et rechercher des symboles
 }
