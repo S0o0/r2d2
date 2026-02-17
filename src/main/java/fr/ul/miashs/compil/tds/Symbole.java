@@ -46,4 +46,8 @@ public class Symbole {
     public int getNbVarLoc(){return nb_var_loc;}
     public int getRang(){return rang;}
     public String getScope(){return scope;}
+    @Override
+    public String toString() {
+        return nom;
+    }
 }

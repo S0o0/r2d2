@@ -2,6 +2,7 @@ package fr.ul.miashs.compil.traduction.exemples;
 
 import fr.ul.miashs.compil.arbre.*;
 import fr.ul.miashs.compil.tds.*;
+import fr.ul.miashs.compil.traduction.Generateur;
 
 public class Exemple1 {
     public static void main(String[] args) {
@@ -20,5 +21,8 @@ public class Exemple1 {
         //afficher de deux manières
         TxtAfficheur.afficher(prog);
         GuiAfficheur.afficher(prog);
+
+        Generateur generateur = new Generateur();
+        System.out.println((generateur.genererProgramme(prog,table)));
     }
 }

@@ -19,21 +19,28 @@ public class Exemple3 {
         // plus
         Multiplication mul = new Multiplication();
         plus.ajouterUnFils(mul);
-        //mul
+
+        Division div = new Division();
+        plus.ajouterUnFils(div);
+
+        // multiplication : a * 2
         Idf a = new Idf(100);
         mul.ajouterUnFils(a);
+
         Const constante1 = new Const(2);
         mul.ajouterUnFils(constante1);
-        Division div = new Division();
-        mul.ajouterUnFils(div);
-        //div
+
+        // division : (b-5) / 3
         Moins moins = new Moins();
         div.ajouterUnFils(moins);
+
         Const constante2 = new Const(3);
         div.ajouterUnFils(constante2);
-        //moins
+
+        // moins : b - 5
         Idf b = new Idf(170);
         moins.ajouterUnFils(b);
+
         Const constante3 = new Const(5);
         moins.ajouterUnFils(constante3);
 

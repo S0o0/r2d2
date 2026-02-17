@@ -23,7 +23,7 @@ public class Generateur {
         code.append(genererExpression(aff.getFilsDroit()));
         code.append("\tPOP(R0)\n");
         Idf var = (Idf) aff.getFilsGauche();
-        code.append("\tST(R0, " + var.getValeur() + ")\n");
+        code.append("\tST(R0, " + ((Symbole)var.getValeur()).getNom() + ")\n");
         return code.toString();
         //👆adapter en fonction des variables globales, paramètres et locales
     }
@@ -237,7 +237,7 @@ public class Generateur {
         for (Noeud fils : a.getFils()) {
             code.append(genererExpression(fils));
         }
-        code.append("\tCALL(+"+a.getLabel()+")\n"); //nom de la fonction
+        code.append("\tCALL("+a.getLabel()+")\n"); //nom de la fonction
         code.append("\tDEALLOCATE("+((Symbole)a.getValeur()).getNb_param()+")\n");
         return code.toString();
     }
