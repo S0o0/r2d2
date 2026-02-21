@@ -46,8 +46,32 @@ public class Symbole {
     public int getNbVarLoc(){return nb_var_loc;}
     public int getRang(){return rang;}
     public String getScope(){return scope;}
+
     @Override
-    public String toString() {
+    public String toString(){
         return nom;
+    }
+
+    public String affichierSymbole() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("nom = ").append(nom);
+        sb.append(", type = ").append(type);
+        sb.append(", cat = ").append(categorie);
+
+        // Affichage conditionnel
+        if (valeur != 0) {
+            sb.append(", val = ").append(valeur);
+        }
+        if (nb_param != 0) {
+            sb.append(", nb_param = ").append(nb_param);
+        }
+        if (nb_var_loc != 0) {
+            sb.append(", nb_var_loc = ").append(nb_var_loc);
+        }
+        sb.append(", rang= ").append(rang);
+        if (scope != null) {
+            sb.append(", scope = ").append(scope);
+        }
+        return sb.toString();
     }
 }

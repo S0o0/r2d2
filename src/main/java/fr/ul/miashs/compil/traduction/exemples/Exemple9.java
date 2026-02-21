@@ -74,11 +74,14 @@ public class Exemple9 {
         a.setValeur(s3);
 
 
-        //afficher de deux manières
+        //Affichage de l'arbre
         TxtAfficheur.afficher(prog);
-        GuiAfficheur.afficher(prog);
 
+        //Affichage du code assembleur
         Generateur generateur = new Generateur();
         System.out.println((generateur.genererProgramme(prog,table)));
+
+        //Affichage de la table des symboles
+        System.out.println(table);
     }
 }

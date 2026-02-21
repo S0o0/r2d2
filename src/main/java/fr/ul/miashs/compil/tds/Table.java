@@ -16,4 +16,13 @@ public class Table extends HashMap<String, Symbole>{
         }
         return null;
     }
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Table des symboles {");
+        for (Symbole s : this.values()) {
+            sb.append(s.affichierSymbole()).append("}\n");
+        }
+        return sb.toString();
+    }
 }
