@@ -2,6 +2,8 @@ package fr.ul.miashs.compil.traduction.exemples;
 
 import fr.ul.miashs.compil.arbre.*;
 import fr.ul.miashs.compil.tds.*;
+import fr.ul.miashs.compil.traduction.Generateur;
+
 import java.awt.*;
 
 public class Exemple9 {
@@ -75,5 +77,8 @@ public class Exemple9 {
         //afficher de deux manières
         TxtAfficheur.afficher(prog);
         GuiAfficheur.afficher(prog);
+
+        Generateur generateur = new Generateur();
+        System.out.println((generateur.genererProgramme(prog,table)));
     }
 }
