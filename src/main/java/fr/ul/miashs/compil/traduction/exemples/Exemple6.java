@@ -5,57 +5,57 @@ import fr.ul.miashs.compil.tds.*;
 import fr.ul.miashs.compil.traduction.Generateur;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Exemple6 {
     public static void main(String[] args) {
         // Création de l'arbre
         Prog prog = new Prog();
         Fonction f = new Fonction("f");
+        Fonction main = new Fonction("main");
         prog.ajouterUnFils(f);
-        //fonction f
+        prog.ajouterUnFils(main);
         Affectation affectation = new Affectation();
         f.ajouterUnFils(affectation);
         Retour retour = new Retour("retour"); // jsp si c'est retour qu'il faut mettre
         f.ajouterUnFils(retour);
         //affectation
         Idf res = new Idf("res");
-        affectation.ajouterUnFils(res);
+        affectation.setFilsGauche(res);
         Plus plus = new Plus();
-        affectation.ajouterUnFils(plus);
+        affectation.setFilsDroit(plus);
         //plus
         Multiplication mul = new Multiplication();
-        plus.ajouterUnFils(mul);
+        plus.setFilsGauche(mul);
         Division div = new Division();
-        plus.ajouterUnFils(div);
+        plus.setFilsDroit(div);
         //mul
         Idf a = new Idf(100);
-        mul.ajouterUnFils(a);
+        mul.setFilsGauche(a);
         Const constante1 = new Const(2);
-        mul.ajouterUnFils(constante1);
+        mul.setFilsDroit(constante1);
         //div
         Moins moins = new Moins();
-        div.ajouterUnFils(moins);
+        div.setFilsGauche(moins);
         Const constante2 = new Const(3);
-        div.ajouterUnFils(constante2);
+        div.setFilsDroit(constante2);
         //moins
         Idf b = new Idf(170); // il a mis b dans le dessin mais dans la tds il met c donc je mets b c'est plus logique jpense
-        moins.ajouterUnFils(b);
+        moins.setFilsGauche(b);
         Const constante3 = new Const(5);
-        moins.ajouterUnFils(constante3);
+        moins.setFilsDroit(constante3);
         //retour
-        retour.ajouterUnFils(res);
+        retour.setLeFils(res);
         //main
-        Fonction main = new Fonction("main");
-        prog.ajouterUnFils(main);
         Ecrire ecrire = new Ecrire();
         main.ajouterUnFils(ecrire);
         //ecrire
-        Appel appel = new Appel(2); // je sais pas faut mettre quoi en parametre, le nombre de parametre ? genre a et c
+        Appel appel = new Appel(2); // 2 : nombre de paramètres
         ecrire.ajouterUnFils(appel);
         //appel
-        Idf a2 = new Idf(0);
+        Idf a2 = new Idf("a");
         appel.ajouterUnFils(a2);
-        Idf c = new Idf(0);
+        Idf c = new Idf("c");
         appel.ajouterUnFils(c);
 
         //Affectation du symbole

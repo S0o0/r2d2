@@ -16,29 +16,29 @@ public class Exemple4 {
         main.ajouterUnFils(ecrire);
         //affectation
         Idf x = new Idf(0);
-        affectation.ajouterUnFils(x);
+        affectation.setFilsGauche(x);
         Plus plus = new Plus();
-        affectation.ajouterUnFils(plus);
+        affectation.setFilsDroit(plus);
         // plus
         Multiplication mul = new Multiplication();
-        plus.ajouterUnFils(mul);
+        plus.setFilsGauche(mul);
         //mul
         Lire lire = new Lire();
-        mul.ajouterUnFils(lire);
+        mul.setFilsGauche(lire);
         Const constante1 = new Const(2);
-        mul.ajouterUnFils(constante1);
+        mul.setFilsDroit(constante1);
         Division div = new Division();
-        mul.ajouterUnFils(div);
+        plus.setFilsDroit(div);
         //div
         Moins moins = new Moins();
-        div.ajouterUnFils(moins);
+        div.setFilsGauche(moins);
         Const constante2 = new Const(3);
-        div.ajouterUnFils(constante2);
+        div.setFilsDroit(constante2);
         //moins
         Lire lire2 = new Lire();
-        moins.ajouterUnFils(lire);
+        moins.setFilsGauche(lire);
         Const constante3 = new Const(5);
-        moins.ajouterUnFils(constante3);
+        moins.setFilsDroit(constante3);
         //ecrire
         ecrire.ajouterUnFils(x);
 

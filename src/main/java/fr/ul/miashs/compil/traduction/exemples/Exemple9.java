@@ -21,39 +21,39 @@ public class Exemple9 {
         f.ajouterUnFils(retour);
         //si
         InferieurEgal inferieurEgal = new InferieurEgal();
-        si.ajouterUnFils(inferieurEgal);
+        si.setCondition(inferieurEgal);
         Bloc bloc = new Bloc();
-        si.ajouterUnFils(bloc);
+        si.setBlocAlors(bloc);
         //inferieuregal
         Idf a = new Idf(0);
-        inferieurEgal.ajouterUnFils(a);
+        inferieurEgal.setFilsGauche(a);
         Const constante = new Const(0);
-        inferieurEgal.ajouterUnFils(constante);
+        inferieurEgal.setFilsDroit(constante);
         //bloc
         Retour retour2 = new Retour("retour2"); // pareil qu'au dessus
         bloc.ajouterUnFils(retour2);
         //retour2
-        retour2.ajouterUnFils(constante);
+        retour2.setLeFils(constante);
         //retour
         Plus plus = new Plus();
-        retour.ajouterUnFils(plus);
+        retour.setLeFils(plus);
         //plus
-        plus.ajouterUnFils(a);
+        plus.setFilsGauche(a);
         Appel appel = new Appel("f");
-        plus.ajouterUnFils(appel);
+        plus.setFilsDroit(appel);
         //appel
         Moins moins = new Moins();
         appel.ajouterUnFils(moins);
         //moins
-        moins.ajouterUnFils(a);
+        moins.setFilsGauche(a);
         Const constante2 = new Const(1);
-        moins.ajouterUnFils(constante2);
+        moins.setFilsDroit(constante2);
         //main
         Ecrire ecrire = new Ecrire();
         main.ajouterUnFils(ecrire);
         //ecrire
         Appel appel2 = new Appel("f"); // je sais pas si je dois utiliser l'appel f d'avant ou un nouveau pck la c'est pour afficher 6 donc jsp
-        ecrire.ajouterUnFils(appel2);
+        ecrire.setLeFils(appel2);
         //appel2
         Const constante3 = new Const(6);
         appel2.ajouterUnFils(constante3);

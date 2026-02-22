@@ -7,7 +7,6 @@ package fr.ul.miashs.compil.traduction;
 import fr.ul.miashs.compil.arbre.*;
 import fr.ul.miashs.compil.tds.Symbole;
 import fr.ul.miashs.compil.tds.Table;
-import java.util.concurrent.locks.Condition;
 
 /**
  * Générateur de code pour un arbre d'affectation
@@ -107,10 +106,14 @@ public class Generateur {
                 code.append("\tPUSH(R3)\n");
                 break;
             case LIRE:
-                //
+                Lire lire = (Lire) expr;
+                code.append("\tREADINT()\n");
+                code.append("\tPUSH(R0)\n");
+                break;
             case APPEL:
                 Appel ap = (Appel) expr;
                 code.append(genererAppel(ap));
+                break;
             default:
                 break;
         }
@@ -257,7 +260,7 @@ public class Generateur {
         StringBuffer code = new StringBuffer();
         code.append("\tSI"+si.getValeur()+" :\n");
         // On parse la condition car getCondition retourne un Noeud
-        code.append(genererCondition((Condition)si.getCondition()));
+        code.append(genererCondition(si.getCondition()));
         code.append("\tPOP(R0)\n");
         code.append("\tBF(R0,SINON_"+si.getValeur()+")\n");
         code.append(genererBloc(si.getBlocAlors()));
@@ -276,7 +279,7 @@ public class Generateur {
         return code.toString();
     }
 
-    public String genererCondition(Condition condition){
+    public String genererCondition(Noeud condition){
         StringBuffer code = new StringBuffer();
         // 1) cas où supérieur
         if (condition instanceof Superieur){
@@ -304,7 +307,7 @@ public class Generateur {
     public String genererTq (TantQue tq){
         StringBuffer code = new StringBuffer();
         code.append("\tTQ_"+tq.getValeur()+" :\n");
-        code.append(genererCondition((Condition)tq.getCondition()));
+        code.append(genererCondition(tq.getCondition()));
         code.append("\tPOP(R1)\n");
         code.append("\tBF(FTQ_"+tq.getValeur()+")\n");
         code.append(genererBloc(tq.getBloc()));

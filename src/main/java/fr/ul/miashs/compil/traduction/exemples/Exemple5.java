@@ -17,24 +17,24 @@ public class Exemple5 {
         ecrire.ajouterUnFils(plus);
         //plus
         Multiplication mul = new Multiplication();
-        plus.ajouterUnFils(mul);
+        plus.setFilsGauche(mul);
         Division div = new Division();
-        plus.ajouterUnFils(div);
+        plus.setFilsDroit(div);
         //mul
         Idf a = new Idf(100);
-        mul.ajouterUnFils(a);
+        mul.setFilsGauche(a);
         Const constante1 = new Const(2);
-        mul.ajouterUnFils(constante1);
+        mul.setFilsDroit(constante1);
         //div
         Moins moins = new Moins();
-        div.ajouterUnFils(moins);
+        div.setFilsGauche(moins);
         Const constante2 = new Const(3);
-        div.ajouterUnFils(constante2);
+        div.setFilsDroit(constante2);
         //moins
         Idf b = new Idf(170);
-        moins.ajouterUnFils(b);
+        moins.setFilsGauche(b);
         Const constante3 = new Const(5);
-        moins.ajouterUnFils(constante3);
+        moins.setFilsDroit(constante3);
 
         //Affectation du symbole
         Table table = new Table();

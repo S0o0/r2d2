@@ -16,31 +16,31 @@ public class Exemple7 {
         main.ajouterUnFils(si);
         //si
         Superieur superieur = new Superieur();
-        si.ajouterUnFils(superieur);
+        si.setCondition(superieur);
         Bloc bloc1 = new Bloc();
-        si.ajouterUnFils(bloc1);
+        si.setBlocAlors(bloc1);
         Bloc bloc2 = new Bloc();
-        si.ajouterUnFils(bloc2);
+        si.setBlocSinon(bloc2);
         //superieur
         Idf a = new Idf(1);
-        superieur.ajouterUnFils(a);
+        superieur.setFilsGauche(a);
         Idf b = new Idf(2);
-        superieur.ajouterUnFils(b);
+        superieur.setFilsDroit(b);
         //bloc1
         Affectation affectation1 = new Affectation();
         bloc1.ajouterUnFils(affectation1);
         //affectation1
         Idf x = new Idf(0);
-        affectation1.ajouterUnFils(x);
+        affectation1.setFilsGauche(x);
         Const constante1 = new Const(1000);
-        affectation1.ajouterUnFils(constante1);
+        affectation1.setFilsDroit(constante1);
         //bloc2
         Affectation affectation2 = new Affectation();
         bloc2.ajouterUnFils(affectation2);
         //affectation2
-        affectation2.ajouterUnFils(x);
+        affectation2.setFilsGauche(x);
         Const constante2 = new Const(2000);
-        affectation2.ajouterUnFils(constante2);
+        affectation2.setFilsDroit(constante2);
 
         //Affectation du symbole
         Table table = new Table();

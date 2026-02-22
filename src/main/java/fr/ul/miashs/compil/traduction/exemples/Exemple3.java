@@ -14,36 +14,36 @@ public class Exemple3 {
         Affectation affectation = new Affectation();
         main.ajouterUnFils(affectation);
         Idf x = new Idf(0);
-        affectation.ajouterUnFils(x);
+        affectation.setFilsGauche(x);
         Plus plus = new Plus();
-        affectation.ajouterUnFils(plus);
+        affectation.setFilsDroit(plus);
         // plus
         Multiplication mul = new Multiplication();
-        plus.ajouterUnFils(mul);
+        plus.setFilsGauche(mul);
 
         Division div = new Division();
-        plus.ajouterUnFils(div);
+        plus.setFilsDroit(div);
 
         // multiplication : a * 2
         Idf a = new Idf(100);
-        mul.ajouterUnFils(a);
+        mul.setFilsGauche(a);
 
         Const constante1 = new Const(2);
-        mul.ajouterUnFils(constante1);
+        mul.setFilsDroit(constante1);
 
         // division : (b-5) / 3
         Moins moins = new Moins();
-        div.ajouterUnFils(moins);
+        div.setFilsGauche(moins);
 
         Const constante2 = new Const(3);
-        div.ajouterUnFils(constante2);
+        div.setFilsDroit(constante2);
 
         // moins : b - 5
         Idf b = new Idf(170);
-        moins.ajouterUnFils(b);
+        moins.setFilsGauche(b);
 
         Const constante3 = new Const(5);
-        moins.ajouterUnFils(constante3);
+        moins.setFilsDroit(constante3);
 
 
         //Affectation du symbole

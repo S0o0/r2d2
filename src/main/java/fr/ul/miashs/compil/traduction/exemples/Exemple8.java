@@ -5,6 +5,7 @@ import fr.ul.miashs.compil.tds.*;
 import fr.ul.miashs.compil.traduction.Generateur;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Exemple8 {
     public static void main(String[] args) {
@@ -13,24 +14,25 @@ public class Exemple8 {
         Fonction main = new Fonction("main");
         prog.ajouterUnFils(main);
         //main
+        //ArrayList<Noeud> filsDeMain = new ArrayList<>();
         Affectation affectation = new Affectation();
         main.ajouterUnFils(affectation);
         TantQue tq = new TantQue();
         main.ajouterUnFils(tq);
         //affectation
         Idf i = new Idf(0);
-        affectation.ajouterUnFils(i);
+        affectation.setFilsGauche(i);
         Const constante1 = new Const(0);
-        affectation.ajouterUnFils(constante1);
+        affectation.setFilsDroit(constante1);
         //tantque
         Inferieur inferieur = new Inferieur();
-        tq.ajouterUnFils(inferieur);
+        tq.setCondition(inferieur);
         Bloc bloc = new Bloc();
-        tq.ajouterUnFils(bloc);
+        tq.setBloc(bloc);
         //inferieur
-        inferieur.ajouterUnFils(i);
+        inferieur.setFilsGauche(i);
         Const constante2 = new Const(6);
-        inferieur.ajouterUnFils(constante2);
+        inferieur.setFilsDroit(constante2);
         //bloc
         Ecrire ecrire = new Ecrire();
         bloc.ajouterUnFils(ecrire);
@@ -39,13 +41,13 @@ public class Exemple8 {
         //ecrire
         ecrire.ajouterUnFils(i);
         //affectation
-        affectation2.ajouterUnFils(i);
+        affectation2.setFilsGauche(i);
         Plus plus = new Plus();
-        affectation2.ajouterUnFils(plus);
+        affectation2.setFilsDroit(plus);
         //plus
-        plus.ajouterUnFils(i);
+        plus.setFilsGauche(i);
         Const constante3 = new Const(1);
-        plus.ajouterUnFils(constante3);
+        plus.setFilsDroit(constante3);
 
         //Affectation du symbole
         Table table = new Table();
