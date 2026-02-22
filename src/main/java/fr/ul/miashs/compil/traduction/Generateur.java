@@ -165,13 +165,13 @@ public class Generateur {
         code.append("\tPUSH(BP)\n");
         code.append("\tMOVE(SP,BP)\n");
         // On parse en symbole pour avoir accès à nb_var_loc
-        code.append("\tALLOCATE(+"+((Symbole)fonction.getValeur()).getNbVarLoc()+")\n");
+        code.append("\tALLOCATE("+((Symbole)fonction.getValeur()).getNbVarLoc()+")\n");
         for  (Noeud fils : fonction.getFils()) {
             code.append(genererInstruction(fils));
         }
         code.append("\tret_"+fonction.getValeur()+"\n");
         // idem
-        code.append("\tDEALLOCATE(+"+((Symbole)fonction.getValeur()).getNbVarLoc()+")\n");
+        code.append("\tDEALLOCATE("+((Symbole)fonction.getValeur()).getNbVarLoc()+")\n");
         code.append("\tPOP(BP)\n");
         code.append("\tPOP(LP)\n");
         code.append("\tRTN()\n");
