@@ -136,7 +136,7 @@ public class Generateur {
             Fonction f = (Fonction) fils;
             code.append(genererFonction(f));
         }
-        code.append("\tpile\n");
+        code.append("\tpile:\n");
 
         return code.toString();
     }
@@ -163,7 +163,7 @@ public class Generateur {
      */
     public String genererFonction(Fonction fonction){
         StringBuffer code = new StringBuffer();
-        code.append("\t"+fonction.getLabel()+" :\n");
+        code.append("\t"+fonction.getValeur()+":\n");
         code.append("\tPUSH(LP)\n");
         code.append("\tPUSH(BP)\n");
         code.append("\tMOVE(SP,BP)\n");
