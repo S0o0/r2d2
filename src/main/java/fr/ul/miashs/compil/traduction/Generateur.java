@@ -127,17 +127,21 @@ public class Generateur {
      */
     public String genererProgramme(Prog programme, Table tds){
         StringBuffer code = new StringBuffer();
+        code.append(".include beta.uasm\n");
+        code.append("\tCMOVE(pile, SP)\n");
+        code.append("\tBR(debut)\n");
         code.append(genererData(tds));
-        code.append("\tdebut:\n");
-        code.append("\tCALL("+ programme.getLabel()+")\n");
+        code.append("debut:\n");
+        Fonction fction = (Fonction) programme.getFils().get(0);
+        code.append("\tCALL(" + fction.getValeur() + ")\n");
         code.append(("\tHALT()\n"));
 
         for (Noeud fils : programme.getFils()) {
             Fonction f = (Fonction) fils;
             code.append(genererFonction(f));
         }
-        code.append("\tpile:\n");
-
+        code.append("pile:\n");
+        code.append("\tSTORAGE(1000)\n");
         return code.toString();
     }
 
@@ -150,7 +154,7 @@ public class Generateur {
         StringBuffer code = new StringBuffer();
         for (Symbole s : tds.values()){
             if ("global".equals(s.getCategorie())){
-                code.append("\t"+s.getNom()+": LONG("+s.getValeur()+")\n");
+                code.append(s.getNom()+": LONG("+s.getValeur()+")\n");
             }
         }
         return code.toString();
@@ -163,7 +167,7 @@ public class Generateur {
      */
     public String genererFonction(Fonction fonction){
         StringBuffer code = new StringBuffer();
-        code.append("\t"+fonction.getValeur()+":\n");
+        code.append(fonction.getValeur()+":\n");
         code.append("\tPUSH(LP)\n");
         code.append("\tPUSH(BP)\n");
         code.append("\tMOVE(SP,BP)\n");
@@ -172,7 +176,7 @@ public class Generateur {
         for  (Noeud fils : fonction.getFils()) {
             code.append(genererInstruction(fils));
         }
-        code.append("\tret_"+fonction.getValeur()+"\n");
+        code.append("ret_"+fonction.getValeur()+":\n");
         // idem
         code.append("\tDEALLOCATE("+((Symbole)fonction.getValeur()).getNbVarLoc()+")\n");
         code.append("\tPOP(BP)\n");
@@ -226,7 +230,7 @@ public class Generateur {
     public String genererEcriture(Ecrire e){
         StringBuffer code = new StringBuffer();;
         code.append(genererExpression(e.getLeFils()));
-        code.append("\tPOP(R0):\n");
+        code.append("\tPOP(R0)\n");
         code.append("\tWRINT()\n");
         return code.toString();
     }
@@ -258,16 +262,16 @@ public class Generateur {
 
     public String genererSi(Si si){
         StringBuffer code = new StringBuffer();
-        code.append("\tSI"+si.getValeur()+" :\n");
+        code.append("si_"+si.getValeur()+" :\n");
         // On parse la condition car getCondition retourne un Noeud
         code.append(genererCondition(si.getCondition()));
         code.append("\tPOP(R0)\n");
-        code.append("\tBF(R0,SINON_"+si.getValeur()+")\n");
+        code.append("\tBF(R0,sinon_"+si.getValeur()+")\n");
         code.append(genererBloc(si.getBlocAlors()));
-        code.append("\tBR(FSI_"+si.getValeur()+")\n");
-        code.append("\tSINON_"+si.getValeur()+" :\n");
+        code.append("\tBR(fsi_"+si.getValeur()+")\n");
+        code.append("sinon_"+si.getValeur()+" :\n");
         code.append(genererBloc(si.getBlocSinon()));
-        code.append("FSI_"+si.getValeur()+" :\n");
+        code.append("fsi_"+si.getValeur()+" :\n");
         return code.toString();
     }
 
@@ -306,13 +310,13 @@ public class Generateur {
 
     public String genererTq (TantQue tq){
         StringBuffer code = new StringBuffer();
-        code.append("\tTQ_"+tq.getValeur()+" :\n");
+        code.append("tq_"+tq.getValeur()+" :\n");
         code.append(genererCondition(tq.getCondition()));
         code.append("\tPOP(R1)\n");
-        code.append("\tBF(FTQ_"+tq.getValeur()+")\n");
+        code.append("\tBF(ftq_"+tq.getValeur()+")\n");
         code.append(genererBloc(tq.getBloc()));
-        code.append("\tBR(TQ_"+tq.getValeur() + ")\n");
-        code.append("\tFTQ_"+tq.getValeur() + " :\n");
+        code.append("\tBR(tq_"+tq.getValeur() + ")\n");
+        code.append("ftq_"+tq.getValeur() + " :\n");
 
         return code.toString();
     }
