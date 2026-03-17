@@ -21,10 +21,24 @@ public class Generateur {
         StringBuffer code = new StringBuffer();
         code.append(genererExpression(aff.getFilsDroit()));
         code.append("\tPOP(R0)\n");
-        Idf var = (Idf) aff.getFilsGauche();
-        code.append("\tST(R0, " + ((Symbole)var.getValeur()).getNom() + ")\n");
+        Idf i = (Idf) aff.getFilsGauche();
+        Symbole s = (Symbole) i.getValeur();
+        int offset;
+        // Suivant les types (global, param et local)
+        switch (s.getCategorie()) {
+            case "global":
+                code.append("\tST(R0, " + s.getNom() + ")\n");
+                break;
+            case "param":
+                offset = 1 + s.getScope().getNb_param() + s.getRang();
+                code.append("\tPUTFRAME("+offset * -4+",R0)\n");
+                break;
+            case "local":
+                offset = -1 - s.getRang();
+                code.append("\tPUTFRAME(" + (offset*4) + ",R0)\n");
+                break;
+        }
         return code.toString();
-        //👆adapter en fonction des variables globales, paramètres et locales
     }
     /**
      * Générer le code pour une expression
@@ -49,11 +63,11 @@ public class Generateur {
                         code.append("\tPUSH(R0)\n");
                         break;
                     case "param":
-                        offset = 1 + s.getNb_param() + s.getRang();
-                        code.append("GETFRAME("+offset * -4+",R0)");
+                        offset = 1 + s.getScope().getNb_param() + s.getRang();
+                        code.append("\tGETFRAME("+offset * -4+",R0)\n");
                         code.append("\tPUSH(R0)\n");
                         break;
-                    case "locale":
+                    case "local":
                         offset = -1 - s.getRang();
                         code.append("\tGETFRAME(" + (offset*4) + ",R0)\n");
                         code.append("\tPUSH(R0)\n");
@@ -154,7 +168,7 @@ public class Generateur {
         StringBuffer code = new StringBuffer();
         for (Symbole s : tds.values()){
             if ("global".equals(s.getCategorie())){
-                code.append(s.getNom()+": LONG("+s.getValeur()+")\n");
+                code.append("\t"+s.getNom()+": LONG("+s.getValeur()+")\n");
             }
         }
         return code.toString();
@@ -244,8 +258,8 @@ public class Generateur {
         for (Noeud fils : a.getFils()) {
             code.append(genererExpression(fils));
         }
-        code.append("\tCALL("+a.getLabel()+")\n"); //nom de la fonction
-        code.append("\tDEALLOCATE("+((Symbole)a.getValeur()).getNb_param()+")\n");
+        code.append("\tCALL("+a.getValeur()+")\n"); //nom de la fonction
+        code.append("\tDEALLOCATE("+a.getFils().size()+")\n");
         return code.toString();
     }
 

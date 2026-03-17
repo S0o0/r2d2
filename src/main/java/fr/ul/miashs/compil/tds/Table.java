@@ -21,7 +21,7 @@ public class Table extends HashMap<String, Symbole>{
         StringBuilder sb = new StringBuilder();
         sb.append("Table des symboles {");
         for (Symbole s : this.values()) {
-            sb.append(s.affichierSymbole()).append("}\n");
+            sb.append(s.afficherSymbole()).append("}\n");
         }
         return sb.toString();
     }

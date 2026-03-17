@@ -17,7 +17,7 @@ public class Exemple6 {
         prog.ajouterUnFils(main);
         Affectation affectation = new Affectation();
         f.ajouterUnFils(affectation);
-        Retour retour = new Retour("retour"); // jsp si c'est retour qu'il faut mettre
+        Retour retour = new Retour("retour");
         f.ajouterUnFils(retour);
         //affectation
         Idf res = new Idf("res");
@@ -30,8 +30,8 @@ public class Exemple6 {
         Division div = new Division();
         plus.setFilsDroit(div);
         //mul
-        Idf a = new Idf(100);
-        mul.setFilsGauche(a);
+        Idf aparam = new Idf(null);
+        mul.setFilsGauche(aparam);
         Const constante1 = new Const(2);
         mul.setFilsDroit(constante1);
         //div
@@ -40,7 +40,7 @@ public class Exemple6 {
         Const constante2 = new Const(3);
         div.setFilsDroit(constante2);
         //moins
-        Idf b = new Idf(170); // il a mis b dans le dessin mais dans la tds il met c donc je mets b c'est plus logique jpense
+        Idf b = new Idf(null);
         moins.setFilsGauche(b);
         Const constante3 = new Const(5);
         moins.setFilsDroit(constante3);
@@ -50,7 +50,7 @@ public class Exemple6 {
         Ecrire ecrire = new Ecrire();
         main.ajouterUnFils(ecrire);
         //ecrire
-        Appel appel = new Appel(2); // 2 : nombre de paramètres
+        Appel appel = new Appel("f");
         ecrire.ajouterUnFils(appel);
         //appel
         Idf a2 = new Idf("a");
@@ -63,10 +63,10 @@ public class Exemple6 {
         Symbole s1 = new Symbole("main","void","fonction",0,0,0);
         Symbole s2 = new Symbole("f","int","fonction",0,2,1);
         Symbole s3 = new Symbole("a","int","global",100,0,0);
-        Symbole s4 = new Symbole("b","int","global",170,0,0);
-        Symbole s5 = new Symbole("a","int","param",0,0,0);
-        Symbole s6 = new Symbole("c","int","param",0,1,0);
-        Symbole s7 = new Symbole("res","int","local",0,0,1);
+        Symbole s4 = new Symbole("c","int","global",170,0,0);
+        Symbole s5 = new Symbole("aparam","int","param",0, s2);
+        Symbole s6 = new Symbole("b","int","param",1, s2);
+        Symbole s7 = new Symbole("res","int","local",0, s2);
         table.put(s1.getNom(), s1);
         table.put(s2.getNom(), s2);
         table.put(s3.getNom(), s3);
@@ -78,10 +78,10 @@ public class Exemple6 {
         //Faire pointer les noeuds aux symboles (avec le setter de NoeudObj)
         main.setValeur(s1);
         f.setValeur(s2);
-        a.setValeur(s3);
-        b.setValeur(s4);
-        a2.setValeur(s5);
-        c.setValeur(s6);
+        a2.setValeur(s3);
+        c.setValeur(s4);
+        aparam.setValeur(s5);
+        b.setValeur(s6);
         res.setValeur(s7);
 
         //Affichage de l'arbre

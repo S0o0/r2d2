@@ -8,7 +8,7 @@ public class Symbole {
     int nb_param;
     int nb_var_loc;
     int rang;
-    String scope;
+    Symbole scope;
 
     public Symbole(String nom, String type, String categorie, int valeur, int nb_param, int nb_var_loc){
         this.nom = nom;
@@ -19,7 +19,14 @@ public class Symbole {
         this.nb_var_loc = nb_var_loc;
     }
     // Constructeur pour exemple 6 et plus
-    public Symbole(String nom, String type, String categorie, int valeur, int nb_param, int nb_var_loc, int rang, String scope){
+    public Symbole(String nom, String type, String categorie, int rang, Symbole scope){
+        this.nom = nom;
+        this.type = type;
+        this.categorie = categorie;
+        this.rang = rang;
+        this.scope = scope;
+    }
+    public Symbole(String nom, String type, String categorie, int valeur, int nb_param, int nb_var_loc, int rang, Symbole scope){
         this.nom = nom;
         this.type = type;
         this.categorie = categorie;
@@ -45,14 +52,14 @@ public class Symbole {
     public int getNb_param(){return nb_param;}
     public int getNbVarLoc(){return nb_var_loc;}
     public int getRang(){return rang;}
-    public String getScope(){return scope;}
+    public Symbole getScope(){return scope;}
 
     @Override
     public String toString(){
         return nom;
     }
 
-    public String affichierSymbole() {
+    public String afficherSymbole() {
         StringBuilder sb = new StringBuilder();
         sb.append("nom = ").append(nom);
         sb.append(", type = ").append(type);
