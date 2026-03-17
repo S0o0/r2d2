@@ -36,7 +36,7 @@ public class Generateur {
         switch (expr.getCat()){
             case CONST:
                 Const c = (Const) expr;
-                code.append("\tCMOVE(R0, " + c.getValeur() + ")\n");
+                code.append("\tCMOVE(" + c.getValeur() + ", R0)\n");
                 code.append("\tPUSH(R0)\n");
                 break;
             case IDF:
@@ -45,7 +45,7 @@ public class Generateur {
                 int offset;
                 switch (s.getCategorie()){
                     case "global":
-                        code.append("\tLD(" + s.getValeur() + ", R0)\n");
+                        code.append("\tLD(" + s.getNom() + ", R0)\n");
                         code.append("\tPUSH(R0)\n");
                         break;
                     case "param":
@@ -96,10 +96,8 @@ public class Generateur {
                 break;
             case DIV:
                 Division div = (Division) expr;
-                Noeud gaucheD = div.getFilsGauche();
-                Noeud droitD = div.getFilsDroit();
-                code.append(genererExpression(gaucheD));
-                code.append(genererExpression(droitD));
+                code.append(genererExpression(div.getFilsGauche()));
+                code.append(genererExpression(div.getFilsDroit()));
                 code.append("\tPOP(R2)\n");
                 code.append("\tPOP(R1)\n");
                 code.append("\tDIV(R1, R2, R3)\n");

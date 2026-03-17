@@ -36,12 +36,5 @@ public class Main {
         fr.ul.miashs.compil.traduction.Generateur gen = new fr.ul.miashs.compil.traduction.Generateur();
         String code = gen.genererAffectation(aff);
         System.out.println(code);
-
-        // faire pointer les noeuds aux symboles (avec le setter de NoeudObj)
-        // Ex: Idf x;
-        //Tds tds
-        // Symbole s = new Symbole(...)
-        //tds.ajouter("s",s);
-        //x.setValeur(s)
     }
 }

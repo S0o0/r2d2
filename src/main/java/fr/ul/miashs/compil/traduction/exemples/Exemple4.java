@@ -36,7 +36,7 @@ public class Exemple4 {
         div.setFilsDroit(constante2);
         //moins
         Lire lire2 = new Lire();
-        moins.setFilsGauche(lire);
+        moins.setFilsGauche(lire2);
         Const constante3 = new Const(5);
         moins.setFilsDroit(constante3);
         //ecrire
