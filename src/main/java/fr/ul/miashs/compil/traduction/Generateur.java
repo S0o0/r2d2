@@ -45,7 +45,7 @@ public class Generateur {
                 int offset;
                 switch (s.getCategorie()){
                     case "global":
-                        code.append("\tCMOVE(R0, " + s.getValeur() + ")\n");
+                        code.append("\tLD(" + s.getValeur() + ", R0)\n");
                         code.append("\tPUSH(R0)\n");
                         break;
                     case "param":
@@ -107,7 +107,7 @@ public class Generateur {
                 break;
             case LIRE:
                 Lire lire = (Lire) expr;
-                code.append("\tREADINT()\n");
+                code.append("\tRDINT()\n");
                 code.append("\tPUSH(R0)\n");
                 break;
             case APPEL:
@@ -128,6 +128,8 @@ public class Generateur {
     public String genererProgramme(Prog programme, Table tds){
         StringBuffer code = new StringBuffer();
         code.append(".include beta.uasm\n");
+        code.append(".include intio.uasm\n");
+        code.append(".options tty\n");
         code.append("\tCMOVE(pile, SP)\n");
         code.append("\tBR(debut)\n");
         code.append(genererData(tds));

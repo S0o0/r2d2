@@ -50,7 +50,7 @@ public class Exemple5 {
         a.setValeur(s2);
         b.setValeur(s3);
 
-        //Affichage de l'arbre
+        //Affichage de l'abre
         TxtAfficheur.afficher(prog);
 
         //Affichage du code assembleur
