@@ -62,7 +62,7 @@ public class Exemple9 {
         Table table = new Table();
         Symbole s1 = new Symbole("main","void","fonction",0,0,0);
         Symbole s2 = new Symbole("f","int","fonction",0,1,0);
-        Symbole s3 = new Symbole("a","int","param",0,0,0);
+        Symbole s3 = new Symbole("a","int","param",0,s2);
         table.put(s1.getNom(), s1);
         table.put(s2.getNom(), s2);
         table.put(s3.getNom(), s3);
@@ -72,7 +72,8 @@ public class Exemple9 {
         main.setValeur(s1);
         f.setValeur(s2);
         a.setValeur(s3);
-
+        retour.setValeur(s2);
+        retour2.setValeur(s2);
 
         //Affichage de l'arbre
         TxtAfficheur.afficher(prog);

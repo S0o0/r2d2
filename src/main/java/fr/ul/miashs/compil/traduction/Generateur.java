@@ -30,12 +30,12 @@ public class Generateur {
                 code.append("\tST(R0, " + s.getNom() + ")\n");
                 break;
             case "param":
-                offset = 1 + s.getScope().getNb_param() + s.getRang();
-                code.append("\tPUTFRAME("+offset * -4+",R0)\n");
+                offset = -(s.getRang() + 1) * 4;
+                code.append("\tPUTFRAME("+offset+",R0)\n");
                 break;
             case "local":
-                offset = -1 - s.getRang();
-                code.append("\tPUTFRAME(" + (offset*4) + ",R0)\n");
+                offset = -(s.getRang() + 1) * 4;
+                code.append("\tPUTFRAME(" + offset + ",R0)\n");
                 break;
         }
         return code.toString();
@@ -146,7 +146,8 @@ public class Generateur {
         code.append("\tBR(debut)\n");
         code.append(genererData(tds));
         code.append("debut:\n");
-        Fonction fction = (Fonction) programme.getFils().get(0);
+        // retourne la dernière fonction soit main quand il y en a plusieurs
+        Fonction fction = (Fonction) programme.getFils().get(programme.getFils().size()-1);
         code.append("\tCALL(" + fction.getValeur() + ")\n");
         code.append(("\tHALT()\n"));
 
@@ -208,7 +209,7 @@ public class Generateur {
     public String genererInstruction(Noeud instruction){
         StringBuffer code = new StringBuffer();
         if ( instruction instanceof Affectation || instruction instanceof Appel || instruction instanceof Ecrire
-        || instruction instanceof Si ||instruction instanceof TantQue){
+        || instruction instanceof Si ||instruction instanceof TantQue || instruction instanceof Retour){
             switch(instruction.getCat()){
                 case AFF:
                     Affectation a = (Affectation) instruction;
@@ -258,19 +259,29 @@ public class Generateur {
         for (Noeud fils : a.getFils()) {
             code.append(genererExpression(fils));
         }
-        code.append("\tCALL("+a.getValeur()+")\n"); //nom de la fonction
+        code.append("\tCALL("+a.getValeur()+")\n");
         code.append("\tDEALLOCATE("+a.getFils().size()+")\n");
         return code.toString();
     }
 
-    public String genererRetour(Retour retour){
+    public String genererAppel(Appel a){
         StringBuffer code = new StringBuffer();
-        int offset;
-        code.append(genererExpression(retour.getLeFils()));
-        offset = 2 + ((Symbole)retour.getValeur()).getNb_param(); // BP
-        code.append("\tPOP(R0)\n");
-        code.append("\tPUTFRAME(R0,"+offset * 4+")\n");
-        code.append("\tBR(ret_"+retour.getValeur()+")\n");
+        boolean aValeurDeRetour = a.getValeur() != null
+                && a.getValeur() instanceof Symbole
+                && !"void".equals(((Symbole)a.getValeur()).getType());
+
+        if (aValeurDeRetour){
+            code.append("\tALLOCATE(1)\n");
+        }
+        for (Noeud fils : a.getFils()) {
+            code.append(genererExpression(fils));
+        }
+        code.append("\tCALL("+a.getValeur()+")\n");
+        code.append("\tDEALLOCATE("+a.getFils().size()+")\n");
+        if (aValeurDeRetour){
+            code.append("\tPOP(R0)\n");
+            code.append("\tPUSH(R0)\n");
+        }
         return code.toString();
     }
 
@@ -305,20 +316,51 @@ public class Generateur {
             code.append(genererExpression(((Superieur) condition).getFilsDroit()));
             code.append("\tPOP(R1)\n");
             code.append("\tPOP(R2)\n");
-            code.append("\tCMPLT(R2,R1,R3)\n");
+            code.append("\tCMPLT(R1,R2,R3)\n");
             code.append("\tPUSH(R3)\n");
         }
         // 2) cas où inférieur
         if (condition instanceof Inferieur) {
-//
+            code.append(genererExpression(((Inferieur) condition).getFilsGauche()));
+            code.append(genererExpression(((Inferieur) condition).getFilsDroit()));
+            code.append("\tPOP(R1)\n");
+            code.append("\tPOP(R2)\n");
+            code.append("\tCMPLT(R2,R1,R3)\n");
+            code.append("\tPUSH(R3)\n");
         }
-        // 3) cas où égal
-
-        // 4) cas où différent
-
-        // 5) cas où inférieur ou égal
-
-        // 6) cas où supérieur ou égal
+        if (condition instanceof Egal){
+            code.append(genererExpression(((Egal) condition).getFilsGauche()));
+            code.append(genererExpression(((Egal) condition).getFilsDroit()));
+            code.append("\tPOP(R1)\n");
+            code.append("\tPOP(R2)\n");
+            code.append("\tCMPEQ(R2,R1,R3)\n");
+            code.append("\tPUSH(R3)\n");
+        }
+        if (condition instanceof Different){
+            code.append(genererExpression(((Different) condition).getFilsGauche()));
+            code.append(genererExpression(((Different) condition).getFilsDroit()));
+            code.append("\tPOP(R1)\n");
+            code.append("\tPOP(R2)\n");
+            code.append("\tCMPEQ(R2,R1,R3)\n");
+            code.append("\tCMPEQC(R3,0,R3)\n");
+            code.append("\tPUSH(R3)\n");
+        }
+        if (condition instanceof InferieurEgal){
+            code.append(genererExpression(((InferieurEgal) condition).getFilsGauche()));
+            code.append(genererExpression(((InferieurEgal) condition).getFilsDroit()));
+            code.append("\tPOP(R1)\n");
+            code.append("\tPOP(R2)\n");
+            code.append("\tCMPLE(R2,R1,R3)\n");
+            code.append("\tPUSH(R3)\n");
+        }
+        if (condition instanceof SuperieurEgal){
+            code.append(genererExpression(((SuperieurEgal) condition).getFilsGauche()));
+            code.append(genererExpression(((SuperieurEgal) condition).getFilsDroit()));
+            code.append("\tPOP(R1)\n");
+            code.append("\tPOP(R2)\n");
+            code.append("\tCMPLE(R1,R2,R3)\n");
+            code.append("\tPUSH(R3)\n");
+        }
         return  code.toString();
     }
 
@@ -327,7 +369,7 @@ public class Generateur {
         code.append("tq_"+tq.getValeur()+" :\n");
         code.append(genererCondition(tq.getCondition()));
         code.append("\tPOP(R1)\n");
-        code.append("\tBF(ftq_"+tq.getValeur()+")\n");
+        code.append("\tBF(R1, ftq_"+tq.getValeur()+")\n");
         code.append(genererBloc(tq.getBloc()));
         code.append("\tBR(tq_"+tq.getValeur() + ")\n");
         code.append("ftq_"+tq.getValeur() + " :\n");
