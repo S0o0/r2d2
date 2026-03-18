@@ -83,6 +83,7 @@ public class Exemple6 {
         aparam.setValeur(s5);
         b.setValeur(s6);
         res.setValeur(s7);
+        retour.setValeur(s2);
 
         //Affichage de l'arbre
         TxtAfficheur.afficher(prog);

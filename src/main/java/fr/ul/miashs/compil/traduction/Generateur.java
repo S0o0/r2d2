@@ -253,19 +253,6 @@ public class Generateur {
 
     public String genererAppel(Appel a){
         StringBuffer code = new StringBuffer();
-        if (a.getValeur() != null){
-            code.append("\tALLOCATE(1)\n");
-        }
-        for (Noeud fils : a.getFils()) {
-            code.append(genererExpression(fils));
-        }
-        code.append("\tCALL("+a.getValeur()+")\n");
-        code.append("\tDEALLOCATE("+a.getFils().size()+")\n");
-        return code.toString();
-    }
-
-    public String genererAppel(Appel a){
-        StringBuffer code = new StringBuffer();
         boolean aValeurDeRetour = a.getValeur() != null
                 && a.getValeur() instanceof Symbole
                 && !"void".equals(((Symbole)a.getValeur()).getType());
@@ -282,6 +269,17 @@ public class Generateur {
             code.append("\tPOP(R0)\n");
             code.append("\tPUSH(R0)\n");
         }
+        return code.toString();
+    }
+
+    public String genererRetour(Retour retour){
+        StringBuffer code = new StringBuffer();
+        int offset;
+        code.append(genererExpression(retour.getLeFils()));
+        offset = 2 + ((Symbole)retour.getValeur()).getNb_param(); // BP
+        code.append("\tPOP(R0)\n");
+        code.append("\tPUTFRAME("+offset * 4+", R0)\n");
+        code.append("\tBR(ret_"+retour.getValeur()+")\n");
         return code.toString();
     }
 
