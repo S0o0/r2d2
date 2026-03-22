@@ -1,0 +1,255 @@
+/* ============================================================
+ * Fichier CUP – Parser pour le langage Mini-C FR
+ * Basé sur le Generateur.java (Azim Roussanaly, 2026)
+ * Compatible JFlex
+ * ============================================================ */
+
+package fr.ul.miashs.compil.traduction;
+
+import java_cup.runtime.*;
+import fr.ul.miashs.compil.arbre.*;
+import fr.ul.miashs.compil.tds.*;
+
+/* ── Déclaration des terminaux (tokens du lexer) ─────────────────── */
+terminal            TYPE_INT, TYPE_VOID;
+terminal            SI, SINON, TANTQUE, RETOUR;
+terminal            ECRIRE, LIRE;
+terminal            PLUS, MOINS, MUL, DIV;
+terminal            SUP, INF, SUP_EG, INF_EG, EGAL, DIFF;
+terminal            AFF;
+terminal            PAR_OUV, PAR_FER, ACCOLADE_OUV, ACCOLADE_FER;
+terminal            VIRGULE, POINT_VIRG;
+terminal Integer    CONST_ENT;
+terminal String     IDF;
+
+/* ── Déclaration des non-terminaux ───────────────────────────────── */
+non terminal Prog           programme;
+non terminal                liste_fonctions;
+non terminal Fonction        fonction;
+non terminal                liste_params;
+non terminal                params;
+non terminal                liste_instructions;
+non terminal Noeud           instruction;
+non terminal Noeud           expression;
+non terminal Noeud           condition;
+non terminal Bloc            bloc;
+non terminal                liste_args;
+non terminal                args;
+
+/* ── Précédences (du moins au plus prioritaire) ──────────────────── */
+precedence left PLUS, MOINS;
+precedence left MUL, DIV;
+
+/* ============================================================
+ * Grammaire
+ * ============================================================ */
+
+/* ── Programme ───────────────────────────────────────────────────── */
+programme ::= liste_fonctions
+            {:
+                RESULT = new Prog();
+            :}
+            ;
+
+liste_fonctions ::= liste_fonctions fonction
+                  | fonction
+                  ;
+
+/* ── Fonction ────────────────────────────────────────────────────── */
+fonction ::= TYPE_VOID IDF:nom PAR_OUV liste_params PAR_FER
+             ACCOLADE_OUV liste_instructions ACCOLADE_FER
+             {:
+                 Fonction f = new Fonction(nom);
+                 RESULT = f;
+             :}
+           | TYPE_INT IDF:nom PAR_OUV liste_params PAR_FER
+             ACCOLADE_OUV liste_instructions ACCOLADE_FER
+             {:
+                 Fonction f = new Fonction(nom);
+                 RESULT = f;
+             :}
+           ;
+
+/* ── Paramètres ──────────────────────────────────────────────────── */
+liste_params ::= params
+               | /* vide */
+               ;
+
+params ::= params VIRGULE TYPE_INT IDF:nom
+         | TYPE_INT IDF:nom
+         ;
+
+/* ── Bloc d'instructions ─────────────────────────────────────────── */
+bloc ::= ACCOLADE_OUV liste_instructions ACCOLADE_FER
+         {:
+             RESULT = new Bloc();
+         :}
+       ;
+
+liste_instructions ::= liste_instructions instruction
+                     | /* vide */
+                     ;
+
+/* ── Instruction ─────────────────────────────────────────────────── */
+instruction ::=
+    /* Affectation */
+    IDF:nom AFF expression:e POINT_VIRG
+    {:
+        Affectation aff = new Affectation();
+        Idf idf = new Idf(nom);
+        aff.setFilsGauche(idf);
+        aff.setFilsDroit(e);
+        RESULT = aff;
+    :}
+
+    /* Ecrire */
+    | ECRIRE PAR_OUV expression:e PAR_FER POINT_VIRG
+    {:
+        Ecrire ecr = new Ecrire();
+        ecr.setLeFils(e);
+        RESULT = ecr;
+    :}
+
+    /* Appel de fonction comme instruction */
+    | IDF:nom PAR_OUV liste_args PAR_FER POINT_VIRG
+    {:
+        Appel ap = new Appel(nom);
+        RESULT = ap;
+    :}
+
+    /* Si sans sinon */
+    | SI PAR_OUV condition:c PAR_FER bloc:alors
+    {:
+        Si si = new Si();
+        si.setCondition(c);
+        si.setBlocAlors(alors);
+        si.setBlocSinon(new Bloc()); /* bloc sinon vide */
+        RESULT = si;
+    :}
+
+    /* Si avec sinon */
+    | SI PAR_OUV condition:c PAR_FER bloc:alors SINON bloc:sinon
+    {:
+        Si si = new Si();
+        si.setCondition(c);
+        si.setBlocAlors(alors);
+        si.setBlocSinon(sinon);
+        RESULT = si;
+    :}
+
+    /* Tant que */
+    | TANTQUE PAR_OUV condition:c PAR_FER bloc:b
+    {:
+        TantQue tq = new TantQue();
+        tq.setCondition(c);
+        tq.setBloc(b);
+        RESULT = tq;
+    :}
+
+    /* Retour */
+    | RETOUR expression:e POINT_VIRG
+    {:
+        Retour ret = new Retour(e);
+        RESULT = ret;
+    :}
+    ;
+
+/* ── Expression ──────────────────────────────────────────────────── */
+expression ::=
+    /* Constante entière */
+    CONST_ENT:v
+    {:
+        RESULT = new Const(v);
+    :}
+
+    /* Identifiant */
+    | IDF:nom
+    {:
+        RESULT = new Idf(nom);
+    :}
+
+    /* Lire */
+    | LIRE PAR_OUV PAR_FER
+    {:
+        RESULT = new Lire();
+    :}
+
+    /* Appel de fonction dans une expression */
+    | IDF:nom PAR_OUV liste_args PAR_FER
+    {:
+        Appel ap = new Appel(nom);
+        RESULT = ap;
+    :}
+
+    /* Addition */
+    | expression:g PLUS expression:d
+    {:
+        Plus p = new Plus();
+        p.setFilsGauche(g);
+        p.setFilsDroit(d);
+        RESULT = p;
+    :}
+
+    /* Soustraction */
+    | expression:g MOINS expression:d
+    {:
+        Moins m = new Moins();
+        m.setFilsGauche(g);
+        m.setFilsDroit(d);
+        RESULT = m;
+    :}
+
+    /* Multiplication */
+    | expression:g MUL expression:d
+    {:
+        Multiplication mul = new Multiplication();
+        mul.setFilsGauche(g);
+        mul.setFilsDroit(d);
+        RESULT = mul;
+    :}
+
+    /* Division */
+    | expression:g DIV expression:d
+    {:
+        Division div = new Division();
+        div.setFilsGauche(g);
+        div.setFilsDroit(d);
+        RESULT = div;
+    :}
+
+    /* Parenthèses */
+    | PAR_OUV expression:e PAR_FER
+    {:
+        RESULT = e;
+    :}
+    ;
+
+/* ── Condition ───────────────────────────────────────────────────── */
+condition ::=
+    expression:g SUP expression:d
+    {:  Superieur s = new Superieur(); s.setFilsGauche(g); s.setFilsDroit(d); RESULT = s; :}
+
+    | expression:g INF expression:d
+    {:  Inferieur s = new Inferieur(); s.setFilsGauche(g); s.setFilsDroit(d); RESULT = s; :}
+
+    | expression:g SUP_EG expression:d
+    {:  SuperieurEgal s = new SuperieurEgal(); s.setFilsGauche(g); s.setFilsDroit(d); RESULT = s; :}
+
+    | expression:g INF_EG expression:d
+    {:  InferieurEgal s = new InferieurEgal(); s.setFilsGauche(g); s.setFilsDroit(d); RESULT = s; :}
+
+    | expression:g EGAL expression:d
+    {:  Egal s = new Egal(); s.setFilsGauche(g); s.setFilsDroit(d); RESULT = s; :}
+
+    | expression:g DIFF expression:d
+    {:  Different s = new Different(); s.setFilsGauche(g); s.setFilsDroit(d); RESULT = s; :}
+    ;
+
+/* ── Arguments d'appel ───────────────────────────────────────────── */
+liste_args ::= args
+             | /* vide */
+             ;
+
+args ::= args VIRGULE expression:e
+       | expression:e
+       ;

@@ -47,64 +47,59 @@
 		<project.bin2.appname>ex2</project.bin2.appname>
 	</properties>
 	<build>
+		<sourceDirectory>src/main/java</sourceDirectory>
+
 		<plugins>
 			<plugin>
-				<!-- use java 11 -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.12.1</version>
-				<configuration>
-					<release>17</release>
-				</configuration>
-			</plugin>
-			<plugin>
-				<!-- create scripts for apps -->
-				<!-- mvn package | appassembler:assemble -->
 				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>appassembler-maven-plugin</artifactId>
-				<version>1.10</version>
-				<configuration>
-					<assembleDirectory>${project.bindist.dir}</assembleDirectory>
-					<programs>
-						<program>
-							<mainClass>${project.bin.classname}</mainClass>
-							<id>${project.bin.appname}</id>
-						</program>						<program>
-						<mainClass>${project.bin2.classname}</mainClass>
-						<id>${project.bin2.appname}</id>
-					</program>
-					</programs>
-				</configuration>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.3.0</version>
 				<executions>
 					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>assemble</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<!-- create a distribution archive -->
-				<!-- mvn install ou assembly:single -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>3.1.0</version>
-				<executions>
-					<execution>
-						<id>make-zip</id>
-						<phase>install</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
+						<phase>generate-sources</phase>
+						<goals><goal>add-source</goal></goals>
 						<configuration>
-							<descriptors>
-								<descriptor>zip.xml</descriptor>
-							</descriptors>
-							<appendAssemblyId>true</appendAssemblyId>
+							<sources>
+								<source>target/generated-sources/cup</source>
+								<source>target/generated-sources/jflex</source>
+							</sources>
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.github.vbmacher</groupId>
+				<artifactId>cup-maven-plugin</artifactId>
+				<version>11b-20160615-3</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals><goal>generate</goal></goals>
+					</execution>
+				</executions>
+				<configuration>
+					<cupDefinition>src/main/cuplex/parser.cup</cupDefinition>
+					<packageName>fr.ul.miashs.compil.traduction</packageName>
+					<className>Parser</className>
+					<symbolsName>sym</symbolsName>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>de.jflex</groupId>
+				<artifactId>jflex-maven-plugin</artifactId>
+				<version>1.9.1</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals><goal>generate</goal></goals>
+					</execution>
+				</executions>
+				<configuration>
+					<lexDefinitions>
+						<lexDefinition>src/main/cuplex</lexDefinition>
+					</lexDefinitions>
+					<outputDirectory>src/main/java</outputDirectory>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -115,6 +110,11 @@
 			<artifactId>junit</artifactId>
 			<version>4.13.1</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.vbmacher</groupId>
+			<artifactId>java-cup-runtime</artifactId>
+			<version>11b-20160615-3</version>
 		</dependency>
 	</dependencies>
 </project>
