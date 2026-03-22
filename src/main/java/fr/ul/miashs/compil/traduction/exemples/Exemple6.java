@@ -84,6 +84,7 @@ public class Exemple6 {
         b.setValeur(s6);
         res.setValeur(s7);
         retour.setValeur(s2);
+        appel.setValeur(s2);
 
         //Affichage de l'arbre
         TxtAfficheur.afficher(prog);

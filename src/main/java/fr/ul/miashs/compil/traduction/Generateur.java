@@ -63,8 +63,8 @@ public class Generateur {
                         code.append("\tPUSH(R0)\n");
                         break;
                     case "param":
-                        offset = 1 + s.getScope().getNb_param() + s.getRang();
-                        code.append("\tGETFRAME("+offset * -4+",R0)\n");
+                        offset = (1 + s.getScope().getNb_param() - s.getRang()) * 4;
+                        code.append("\tGETFRAME("+offset+",R0)\n");
                         code.append("\tPUSH(R0)\n");
                         break;
                     case "local":
