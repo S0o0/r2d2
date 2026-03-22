@@ -33,7 +33,7 @@
   <artifactId>compil</artifactId>
   <version>1.0</version>
 	<properties>
-		<!-- Le code source en UTF8 -->
+		<!-- Le code source en UTF8. -->
 		<project.build.sourceEncoding>UTF8</project.build.sourceEncoding>
 		<!-- Où stocker la distribution binaire -->
 		<project.bindist.dir>${project.basedir}/bindist</project.bindist.dir>
