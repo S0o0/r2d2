@@ -186,7 +186,7 @@ public class Generateur {
         code.append("\tPUSH(LP)\n");
         code.append("\tPUSH(BP)\n");
         code.append("\tMOVE(SP,BP)\n");
-        // On parse en symbole pour avoir accès à nb_var_loc
+        // On ex1 en symbole pour avoir accès à nb_var_loc
         code.append("\tALLOCATE("+((Symbole)fonction.getValeur()).getNbVarLoc()+")\n");
         for  (Noeud fils : fonction.getFils()) {
             code.append(genererInstruction(fils));
@@ -286,7 +286,7 @@ public class Generateur {
     public String genererSi(Si si){
         StringBuffer code = new StringBuffer();
         code.append("si_"+si.getValeur()+" :\n");
-        // On parse la condition car getCondition retourne un Noeud
+        // On ex1 la condition car getCondition retourne un Noeud
         code.append(genererCondition(si.getCondition()));
         code.append("\tPOP(R0)\n");
         code.append("\tBF(R0,sinon_"+si.getValeur()+")\n");
