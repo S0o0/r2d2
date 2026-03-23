@@ -1,120 +1,137 @@
-<!--
-  ~  License and Copyright:
-  ~
-  ~  This file is part of arbre  project.
-  ~
-  ~ MIT License:
-  ~
-  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
-  ~ of this software and associated documentation files (the "Software"), to deal
-  ~ in the Software without restriction, including without limitation the rights
-  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-  ~ copies of the Software, and to permit persons to whom the Software is
-  ~ furnished to do so, subject to the following conditions:
-  ~
-  ~ The above copyright notice and this permission notice shall be included in all
-  ~ copies or substantial portions of the Software.
-  ~
-  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-  ~ SOFTWARE.
-  ~ Copyright 2025 by IDMC, Université de Lorraine (azim)
-  ~ All right reserved
-  ~
-  -->
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>fr.ul.miashs</groupId>
-  <artifactId>compil</artifactId>
-  <version>1.0</version>
-	<properties>
-		<!-- Le code source en UTF8. -->
-		<project.build.sourceEncoding>UTF8</project.build.sourceEncoding>
-		<!-- Où stocker la distribution binaire -->
-		<project.bindist.dir>${project.basedir}/bindist</project.bindist.dir>
-		<!-- Nom de la classe principale -->
-		<project.bin.classname>${project.groupId}.${project.artifactId}.arbre.exemples.Exemple1</project.bin.classname>
-		<!-- Nom de la classe principale -->
-		<project.bin.appname>ex1</project.bin.appname>
-		<!-- Nom de la classe principale #2 -->
-		<project.bin2.classname>${project.groupId}.${project.artifactId}.arbre.exemples.Exemple2</project.bin2.classname>
-		<!-- Nom de la classe principale -->
-		<project.bin2.appname>ex2</project.bin2.appname>
-	</properties>
-	<build>
-		<sourceDirectory>src/main/java</sourceDirectory>
-
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>3.3.0</version>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals><goal>add-source</goal></goals>
-						<configuration>
-							<sources>
-								<source>target/generated-sources/cup</source>
-								<source>target/generated-sources/jflex</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>com.github.vbmacher</groupId>
-				<artifactId>cup-maven-plugin</artifactId>
-				<version>11b-20160615-3</version>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals><goal>generate</goal></goals>
-					</execution>
-				</executions>
-				<configuration>
-					<cupDefinition>src/main/cuplex/parser.cup</cupDefinition>
-					<packageName>fr.ul.miashs.compil.traduction</packageName>
-					<className>Parser</className>
-					<symbolsName>sym</symbolsName>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>de.jflex</groupId>
-				<artifactId>jflex-maven-plugin</artifactId>
-				<version>1.9.1</version>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals><goal>generate</goal></goals>
-					</execution>
-				</executions>
-				<configuration>
-					<lexDefinitions>
-						<lexDefinition>src/main/cuplex</lexDefinition>
-					</lexDefinitions>
-					<outputDirectory>src/main/java</outputDirectory>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-	<dependencies>
-		<!-- https://mvnrepository.com/artifact/junit/junit -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.13.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.github.vbmacher</groupId>
-			<artifactId>java-cup-runtime</artifactId>
-			<version>11b-20160615-3</version>
-		</dependency>
-	</dependencies>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>fr.ul.miashs</groupId>
+    <artifactId>parsing</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <properties>
+        <maven.compiler.source>22</maven.compiler.source>
+        <maven.compiler.target>22</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.bindist.dir>${project.basedir}/bindist</project.bindist.dir>
+        <project.bin.classname>${project.groupId}.${project.artifactId}.Main</project.bin.classname>
+        <project.bin.appname>parse</project.bin.appname>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.12.1</version>
+                <configuration>
+                    <release>21</release>
+                </configuration>
+            </plugin>
+            <plugin>
+                <!--  Ici, on crée une distribution binaire  -->
+                <!--  Dossier de la bindist: ${project.basedir.bindist}  -->
+                <!--  Nom du script : ${project.bin.appname}  -->
+                <!--  Classe principale : ${project.bin.classname}  -->
+                <!--  Commande : mvn package  -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>1.10</version>
+                <configuration>
+                    <assembleDirectory>${project.bindist.dir}</assembleDirectory>
+                    <programs>
+                        <program>
+                            <mainClass>${project.bin.classname}</mainClass>
+                            <id>${project.bin.appname}</id>
+                        </program>
+                    </programs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assemble</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!--  Ici, on crée une distribution source  -->
+                <!--
+                 C'est une archive zip, qui pourra être déposée sur ARCHE
+                -->
+                <!--  Dossier : target  -->
+                <!--  Configuration : voir zip.xml  -->
+                <!--  Commande : mvn install  -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>make-zip</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>zip.xml</descriptor>
+                            </descriptors>
+                            <appendAssemblyId>true</appendAssemblyId>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--  Ici, on utilise jflex  -->
+            <!--  Conventions :  -->
+            <!--
+             le fichier source .lex est stocké dans le dossier src/main/cuplex/
+            -->
+            <!--
+             le fichier généré Yylex.java est dans src/main/java
+            -->
+            <!--  Commande : mvn generate-sources  -->
+            <!--  https://mvnrepository.com/artifact/de.jflex/jflex  -->
+            <plugin>
+                <groupId>de.jflex</groupId>
+                <artifactId>jflex-maven-plugin</artifactId>
+                <version>1.9.1</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <lexDefinitions>
+                        <lexDefinition>src/main/cuplex</lexDefinition>
+                    </lexDefinitions>
+                    <outputDirectory>src/main/java</outputDirectory>
+                    <verbose>true</verbose>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.vbmacher</groupId>
+                <artifactId>cup-maven-plugin</artifactId>
+                <version>11b-20160615-3</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals><goal>generate</goal></goals>
+                        <configuration>
+                            <cupDefinition>
+                                src/main/cuplex/Parser.cup
+                            </cupDefinition>
+                            <className>ParserCup</className>
+                            <symbolsName>Sym</symbolsName>
+                            <outputDirectory>src/main/java</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>com.github.vbmacher</groupId>
+            <artifactId>java-cup-runtime</artifactId>
+            <version>11b-20160615-3</version>
+        </dependency>
+    </dependencies>
 </project>

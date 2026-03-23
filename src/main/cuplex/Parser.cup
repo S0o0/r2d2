@@ -4,7 +4,7 @@
  * Compatible JFlex
  * ============================================================ */
 
-package fr.ul.miashs.compil.traduction;
+package fr.ul.miashs.compil.parsing;
 
 import java_cup.runtime.*;
 import fr.ul.miashs.compil.arbre.*;

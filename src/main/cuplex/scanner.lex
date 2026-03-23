@@ -1,14 +1,11 @@
-package fr.ul.miashs.compil.traduction;
+package fr.ul.miashs.compil.parsing;
 import java_cup.runtime.*;
 //Section options et déclarations
 %%
-
-%class Lexer
+/* options */
 %public
-%unicode
+%cupsym Sym
 %cup
-%line
-%column
 
 %{
     /**
