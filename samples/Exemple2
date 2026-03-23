@@ -1,0 +1,3 @@
+void main() {
+    ecrire(5);
+}

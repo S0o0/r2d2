@@ -44,53 +44,53 @@ ESPACE      = [ \t\r\n]+
 <COMMENTAIRE_BLOC> [^]          { /* ignoré */ }
 
 //Mots-clés de types
-<YYINITIAL> "int"               { return symbol(sym.TYPE_INT);  }
-<YYINITIAL> "void"              { return symbol(sym.TYPE_VOID); }
+<YYINITIAL> "int"               { return symbol(Sym.TYPE_INT);  }
+<YYINITIAL> "void"              { return symbol(Sym.TYPE_VOID); }
 
 //Mots-clés de contrôle
-<YYINITIAL> "si"                { return symbol(sym.SI);      }
-<YYINITIAL> "sinon"             { return symbol(sym.SINON);   }
-<YYINITIAL> "tantque"           { return symbol(sym.TANTQUE); }
-<YYINITIAL> "retour"            { return symbol(sym.RETOUR);  }
+<YYINITIAL> "si"                { return symbol(Sym.SI);      }
+<YYINITIAL> "sinon"             { return symbol(Sym.SINON);   }
+<YYINITIAL> "tantque"           { return symbol(Sym.TANTQUE); }
+<YYINITIAL> "retour"            { return symbol(Sym.RETOUR);  }
 
 //Mots-clés E/S
-<YYINITIAL> "ecrire"            { return symbol(sym.ECRIRE); }
-<YYINITIAL> "lire"              { return symbol(sym.LIRE);   }
+<YYINITIAL> "ecrire"            { return symbol(Sym.ECRIRE); }
+<YYINITIAL> "lire"              { return symbol(Sym.LIRE);   }
 
 //Opérateurs arithmétiques
-<YYINITIAL> "+"                 { return symbol(sym.PLUS);  }
-<YYINITIAL> "-"                 { return symbol(sym.MOINS); }
-<YYINITIAL> "*"                 { return symbol(sym.MUL);   }
-<YYINITIAL> "/"                 { return symbol(sym.DIV);   }
+<YYINITIAL> "+"                 { return symbol(Sym.PLUS);  }
+<YYINITIAL> "-"                 { return symbol(Sym.MOINS); }
+<YYINITIAL> "*"                 { return symbol(Sym.MUL);   }
+<YYINITIAL> "/"                 { return symbol(Sym.DIV);   }
 
 //Opérateurs de comparaison (2 car. avant 1 car.)
-<YYINITIAL> ">="                { return symbol(sym.SUP_EG); }
-<YYINITIAL> "<="                { return symbol(sym.INF_EG); }
-<YYINITIAL> "=="                { return symbol(sym.EGAL);   }
-<YYINITIAL> "!="                { return symbol(sym.DIFF);   }
-<YYINITIAL> ">"                 { return symbol(sym.SUP);    }
-<YYINITIAL> "<"                 { return symbol(sym.INF);    }
+<YYINITIAL> ">="                { return symbol(Sym.SUP_EG); }
+<YYINITIAL> "<="                { return symbol(Sym.INF_EG); }
+<YYINITIAL> "=="                { return symbol(Sym.EGAL);   }
+<YYINITIAL> "!="                { return symbol(Sym.DIFF);   }
+<YYINITIAL> ">"                 { return symbol(Sym.SUP);    }
+<YYINITIAL> "<"                 { return symbol(Sym.INF);    }
 
 //Opérateur d'affectation
-<YYINITIAL> "="                 { return symbol(sym.AFF); }
+<YYINITIAL> "="                 { return symbol(Sym.AFF); }
 
 //Délimiteurs
-<YYINITIAL> "("                 { return symbol(sym.PAR_OUV);      }
-<YYINITIAL> ")"                 { return symbol(sym.PAR_FER);      }
-<YYINITIAL> "{"                 { return symbol(sym.ACCOLADE_OUV); }
-<YYINITIAL> "}"                 { return symbol(sym.ACCOLADE_FER); }
-<YYINITIAL> ","                 { return symbol(sym.VIRGULE);      }
-<YYINITIAL> ";"                 { return symbol(sym.POINT_VIRG);   }
+<YYINITIAL> "("                 { return symbol(Sym.PAR_OUV);      }
+<YYINITIAL> ")"                 { return symbol(Sym.PAR_FER);      }
+<YYINITIAL> "{"                 { return symbol(Sym.ACCOLADE_OUV); }
+<YYINITIAL> "}"                 { return symbol(Sym.ACCOLADE_FER); }
+<YYINITIAL> ","                 { return symbol(Sym.VIRGULE);      }
+<YYINITIAL> ";"                 { return symbol(Sym.POINT_VIRG);   }
 
 //Constante entière
 <YYINITIAL> {ENTIER}            {
-                                    return symbol(sym.CONST_ENT,
+                                    return symbol(Sym.CONST_ENT,
                                         Integer.parseInt(yytext()));
                                 }
 
 //Identificateur
 <YYINITIAL> {IDENT}             {
-                                    return symbol(sym.IDF, yytext());
+                                    return symbol(Sym.IDF, yytext());
                                 }
 
 //Caractère non reconnu

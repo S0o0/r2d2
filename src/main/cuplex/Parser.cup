@@ -1,9 +1,3 @@
-/* ============================================================
- * Fichier CUP – Parser pour le langage Mini-C FR
- * Basé sur le Generateur.java (Azim Roussanaly, 2026)
- * Compatible JFlex
- * ============================================================ */
-
 package fr.ul.miashs.compil.parsing;
 
 import java_cup.runtime.*;

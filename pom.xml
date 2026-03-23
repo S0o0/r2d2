@@ -9,7 +9,7 @@
         <maven.compiler.target>22</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.bindist.dir>${project.basedir}/bindist</project.bindist.dir>
-        <project.bin.classname>${project.groupId}.${project.artifactId}.Main</project.bin.classname>
+        <project.bin.classname>${project.groupId}.compil.${project.artifactId}.Main</project.bin.classname>
         <project.bin.appname>parse</project.bin.appname>
     </properties>
     <build>
