@@ -1,0 +1,12 @@
+void main() {
+    a = 1;
+    b = 2;
+    x = 0;
+    si(a > b) {
+        x = 1000;
+        retour x;
+    } sinon {
+        x = 2000;
+        retour x;
+    }
+}
