@@ -1,0 +1,4 @@
+void main() {
+    res = lire()*2 + (lire()-5)/3;
+    ecrire(res);
+}
