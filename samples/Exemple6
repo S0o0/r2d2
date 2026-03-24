@@ -1,0 +1,8 @@
+int f(int a, int b){
+    res = a*2 + (b-5)/3;
+    retour res;
+}
+
+void main(){
+    ecrire(f(100,170));
+}
