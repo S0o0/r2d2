@@ -1,8 +1,12 @@
-int f(int a, int b){
-    res = a*2 + (b-5)/3;
+int a = 100;
+int c = 170;
+
+int f(int a, int b) {
+    int res;
+    res = a * 2 + (b - 5) / 3;
     retour res;
 }
 
-void main(){
-    ecrire(f(100,170));
+void main() {
+    ecrire(f(a, c));
 }

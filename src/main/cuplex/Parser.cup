@@ -27,12 +27,16 @@ terminal String     IDF;
 
 /* ── Déclaration des non-terminaux ───────────────────────────────── */
 non terminal Prog                   programme;
+non terminal ArrayList<Noeud>       liste_declarations_globales;
 non terminal ArrayList<Noeud>       liste_fonctions;
 non terminal Fonction               fonction;
+non terminal String                 entete_fonction_void;
+non terminal String                 entete_fonction_int;
 non terminal ArrayList<Symbole>     liste_params;
 non terminal ArrayList<Symbole>     params;
 non terminal ArrayList<Noeud>       liste_instructions;
 non terminal Noeud                  instruction;
+non terminal Noeud                  declaration_locale;
 non terminal Noeud                  expression;
 non terminal Noeud                  condition;
 non terminal Bloc                   bloc;
@@ -47,18 +51,53 @@ precedence left MUL, DIV;
  * Grammaire
  * ============================================================ */
 
-/* ── Programme : point d'entrée ──────────────────────────────────── */
-programme ::= liste_fonctions:lf
+/* ── Programme ───────────────────────────────────────────────────── */
+programme ::= liste_declarations_globales:ld liste_fonctions:lf
     {:
         Prog prog = new Prog();
-        for (Noeud f : lf) {
-            prog.ajouterUnFils(f);
-        }
+        for (Noeud f : lf) prog.ajouterUnFils(f);
         System.out.println("=== Arbre abstrait ===");
         TxtAfficheur.afficher(prog);
         System.out.println("\n=== Table des symboles ===");
         System.out.println(parser.tds);
         RESULT = prog;
+    :}
+    | liste_fonctions:lf
+    {:
+        Prog prog = new Prog();
+        for (Noeud f : lf) prog.ajouterUnFils(f);
+        System.out.println("=== Arbre abstrait ===");
+        TxtAfficheur.afficher(prog);
+        System.out.println("\n=== Table des symboles ===");
+        System.out.println(parser.tds);
+        RESULT = prog;
+    :}
+    ;
+
+/* ── Déclarations globales ───────────────────────────────────────── */
+liste_declarations_globales ::= liste_declarations_globales:ld TYPE_INT IDF:nom POINT_VIRG
+    {:
+        Symbole s = new Symbole(nom, "int", "global", 0, 0, 0, 0, null);
+        parser.tds.put(nom, s);
+        RESULT = ld;
+    :}
+    | liste_declarations_globales:ld TYPE_INT IDF:nom AFF CONST_ENT:val POINT_VIRG
+    {:
+        Symbole s = new Symbole(nom, "int", "global", val, 0, 0, 0, null);
+        parser.tds.put(nom, s);
+        RESULT = ld;
+    :}
+    | TYPE_INT IDF:nom POINT_VIRG
+    {:
+        Symbole s = new Symbole(nom, "int", "global", 0, 0, 0, 0, null);
+        parser.tds.put(nom, s);
+        RESULT = new ArrayList<>();
+    :}
+    | TYPE_INT IDF:nom AFF CONST_ENT:val POINT_VIRG
+    {:
+        Symbole s = new Symbole(nom, "int", "global", val, 0, 0, 0, null);
+        parser.tds.put(nom, s);
+        RESULT = new ArrayList<>();
     :}
     ;
 
@@ -76,44 +115,47 @@ liste_fonctions ::= liste_fonctions:lf fonction:f
     :}
     ;
 
-/* ── Fonction void ───────────────────────────────────────────────── */
-fonction ::= TYPE_VOID IDF:nom
+/* ── Entêtes de fonctions : règles séparées pour initialiser le scope
+      AVANT de parser les params et le corps.
+      C'est le remplacement des mid-rule actions. ──────────────────── */
+entete_fonction_void ::= TYPE_VOID IDF:nom
     {:
         Symbole sf = new Symbole(nom, "void", "fonction", 0, 0, 0, 0, null);
         parser.tds.put(nom, sf);
         parser.scopeActuel    = sf;
         parser.nbParamActuel  = 0;
         parser.nbVarLocActuel = 0;
+        RESULT = nom;
     :}
-    PAR_OUV liste_params:lp PAR_FER
-    ACCOLADE_OUV liste_instructions:li ACCOLADE_FER
-    {:
-        Symbole sf = parser.tds.rechercherSymbole(nom);
-        Fonction f = new Fonction(sf);
-        for (Noeud instr : li) {
-            f.ajouterUnFils(instr);
-        }
-        parser.scopeActuel = null;
-        RESULT = f;
-    :}
+    ;
 
-    /* ── Fonction int ─────────────────────────────────────────────── */
-    | TYPE_INT IDF:nom
+entete_fonction_int ::= TYPE_INT IDF:nom
     {:
         Symbole sf = new Symbole(nom, "int", "fonction", 0, 0, 0, 0, null);
         parser.tds.put(nom, sf);
         parser.scopeActuel    = sf;
         parser.nbParamActuel  = 0;
         parser.nbVarLocActuel = 0;
+        RESULT = nom;
     :}
-    PAR_OUV liste_params:lp PAR_FER
-    ACCOLADE_OUV liste_instructions:li ACCOLADE_FER
+    ;
+
+/* ── Fonctions ───────────────────────────────────────────────────── */
+fonction ::= entete_fonction_void:nom PAR_OUV liste_params:lp PAR_FER
+             ACCOLADE_OUV liste_instructions:li ACCOLADE_FER
     {:
         Symbole sf = parser.tds.rechercherSymbole(nom);
         Fonction f = new Fonction(sf);
-        for (Noeud instr : li) {
-            f.ajouterUnFils(instr);
-        }
+        for (Noeud instr : li) f.ajouterUnFils(instr);
+        parser.scopeActuel = null;
+        RESULT = f;
+    :}
+    | entete_fonction_int:nom PAR_OUV liste_params:lp PAR_FER
+      ACCOLADE_OUV liste_instructions:li ACCOLADE_FER
+    {:
+        Symbole sf = parser.tds.rechercherSymbole(nom);
+        Fonction f = new Fonction(sf);
+        for (Noeud instr : li) f.ajouterUnFils(instr);
         parser.scopeActuel = null;
         RESULT = f;
     :}
@@ -143,24 +185,47 @@ params ::= params:lp VIRGULE TYPE_INT IDF:nom
     :}
     ;
 
-/* ── Bloc d'instructions ─────────────────────────────────────────── */
+/* ── Bloc ────────────────────────────────────────────────────────── */
 bloc ::= ACCOLADE_OUV liste_instructions:li ACCOLADE_FER
     {:
         Bloc b = new Bloc();
-        for (Noeud instr : li) {
-            b.ajouterUnFils(instr);
-        }
+        for (Noeud instr : li) b.ajouterUnFils(instr);
         RESULT = b;
     :}
     ;
 
+/* ── Liste d'instructions ────────────────────────────────────────── */
 liste_instructions ::= liste_instructions:li instruction:i
     {:
         li.add(i);
         RESULT = li;
     :}
+    | liste_instructions:li declaration_locale:d
+    {:
+        if (d != null) li.add(d);
+        RESULT = li;
+    :}
     | /* vide */
     {:  RESULT = new ArrayList<>(); :}
+    ;
+
+/* ── Déclaration locale ──────────────────────────────────────────── */
+declaration_locale ::= TYPE_INT IDF:nom POINT_VIRG
+    {:
+        Symbole s = new Symbole(nom, "int", "local", parser.nbVarLocActuel++, parser.scopeActuel);
+        parser.tds.put(nom, s);
+        RESULT = null;
+    :}
+    | TYPE_INT IDF:nom AFF CONST_ENT:val POINT_VIRG
+    {:
+        Symbole s = new Symbole(nom, "int", "local", parser.nbVarLocActuel++, parser.scopeActuel);
+        parser.tds.put(nom, s);
+        Idf idf = new Idf(s);
+        Affectation aff = new Affectation();
+        aff.setFilsGauche(idf);
+        aff.setFilsDroit(new Const(val));
+        RESULT = aff;
+    :}
     ;
 
 /* ── Instructions ────────────────────────────────────────────────── */
@@ -198,9 +263,7 @@ instruction ::=
             parser.tds.put(nom, s);
         }
         Appel ap = new Appel(s);
-        for (Noeud arg : la) {
-            ap.ajouterUnFils(arg);
-        }
+        for (Noeud arg : la) ap.ajouterUnFils(arg);
         RESULT = ap;
     :}
 
@@ -236,7 +299,8 @@ instruction ::=
     /* Retour */
     | RETOUR expression:e POINT_VIRG
     {:
-        Retour ret = new Retour(e);
+        Retour ret = new Retour(parser.scopeActuel);
+        ret.setLeFils(e);
         RESULT = ret;
     :}
     ;
@@ -244,11 +308,9 @@ instruction ::=
 /* ── Expressions ─────────────────────────────────────────────────── */
 expression ::=
 
-    /* Constante entière */
     CONST_ENT:v
     {:  RESULT = new Const(v); :}
 
-    /* Identifiant */
     | IDF:nom
     {:
         Symbole s = parser.tds.rechercherSymbole(nom);
@@ -259,11 +321,9 @@ expression ::=
         RESULT = new Idf(s);
     :}
 
-    /* Lire */
     | LIRE PAR_OUV PAR_FER
     {:  RESULT = new Lire(); :}
 
-    /* Appel de fonction dans une expression */
     | IDF:nom PAR_OUV liste_args:la PAR_FER
     {:
         Symbole s = parser.tds.rechercherSymbole(nom);
@@ -272,13 +332,10 @@ expression ::=
             parser.tds.put(nom, s);
         }
         Appel ap = new Appel(s);
-        for (Noeud arg : la) {
-            ap.ajouterUnFils(arg);
-        }
+        for (Noeud arg : la) ap.ajouterUnFils(arg);
         RESULT = ap;
     :}
 
-    /* Addition */
     | expression:g PLUS expression:d
     {:
         Plus p = new Plus();
@@ -287,7 +344,6 @@ expression ::=
         RESULT = p;
     :}
 
-    /* Soustraction */
     | expression:g MOINS expression:d
     {:
         Moins m = new Moins();
@@ -296,7 +352,6 @@ expression ::=
         RESULT = m;
     :}
 
-    /* Multiplication */
     | expression:g MUL expression:d
     {:
         Multiplication mul = new Multiplication();
@@ -305,7 +360,6 @@ expression ::=
         RESULT = mul;
     :}
 
-    /* Division */
     | expression:g DIV expression:d
     {:
         Division div = new Division();
@@ -314,7 +368,6 @@ expression ::=
         RESULT = div;
     :}
 
-    /* Parenthèses */
     | PAR_OUV expression:e PAR_FER
     {:  RESULT = e; :}
     ;

@@ -2,7 +2,7 @@ int f(int a) {
     si (a <= 0) {
         retour 0;
     }
-    retour(a + f(a - 1));
+    retour (a + f(a - 1));
 }
 
 void main() {
