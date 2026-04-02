@@ -64,16 +64,16 @@ public class Exemple6 {
         Symbole s2 = new Symbole("f","int","fonction",0,2,1);
         Symbole s3 = new Symbole("a","int","global",100,0,0);
         Symbole s4 = new Symbole("c","int","global",170,0,0);
-        Symbole s5 = new Symbole("aparam","int","param",0, s2);
+        Symbole s5 = new Symbole("a","int","param",0, s2);
         Symbole s6 = new Symbole("b","int","param",1, s2);
         Symbole s7 = new Symbole("res","int","local",0, s2);
-        table.put(s1.getNom(), s1);
-        table.put(s2.getNom(), s2);
-        table.put(s3.getNom(), s3);
-        table.put(s4.getNom(), s4);
-        table.put(s5.getNom(), s5);
-        table.put(s6.getNom(), s6);
-        table.put(s7.getNom(), s7);
+        table.ajouterSymbole(s1);
+        table.ajouterSymbole(s2);
+        table.ajouterSymbole(s3);
+        table.ajouterSymbole(s4);
+        table.ajouterSymbole(s5);
+        table.ajouterSymbole(s6);
+        table.ajouterSymbole(s7);
 
         //Faire pointer les noeuds aux symboles (avec le setter de NoeudObj)
         main.setValeur(s1);

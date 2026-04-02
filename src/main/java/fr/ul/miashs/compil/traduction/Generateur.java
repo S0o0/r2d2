@@ -8,6 +8,8 @@ import fr.ul.miashs.compil.arbre.*;
 import fr.ul.miashs.compil.tds.Symbole;
 import fr.ul.miashs.compil.tds.Table;
 
+import java.util.List;
+
 /**
  * Générateur de code pour un arbre d'affectation
  */
@@ -30,7 +32,7 @@ public class Generateur {
                 code.append("\tST(R0, " + s.getNom() + ")\n");
                 break;
             case "param":
-                offset = -(s.getRang() + 1) * 4;
+                offset = -(2 + s.getScope().getNb_param() - s.getRang()) * 4;
                 code.append("\tPUTFRAME("+offset+",R0)\n");
                 break;
             case "local":
@@ -63,13 +65,13 @@ public class Generateur {
                         code.append("\tPUSH(R0)\n");
                         break;
                     case "param":
-                        offset = (1 + s.getScope().getNb_param() - s.getRang()) * 4;
+                        offset = -(2 + s.getScope().getNb_param() - s.getRang()) * 4;
                         code.append("\tGETFRAME("+offset+",R0)\n");
                         code.append("\tPUSH(R0)\n");
                         break;
                     case "local":
-                        offset = -1 - s.getRang();
-                        code.append("\tGETFRAME(" + (offset*4) + ",R0)\n");
+                        offset =  -(s.getRang() + 1) * 4;
+                        code.append("\tGETFRAME(" + offset + ",R0)\n");
                         code.append("\tPUSH(R0)\n");
                         break;
                 }
@@ -167,9 +169,11 @@ public class Generateur {
      */
     public String genererData(Table tds){
         StringBuffer code = new StringBuffer();
-        for (Symbole s : tds.values()){
-            if ("global".equals(s.getCategorie())){
-                code.append("\t"+s.getNom()+": LONG("+s.getValeur()+")\n");
+        for (List<Symbole> liste : tds.values()) {
+            for (Symbole s : liste) {
+                if ("global".equals(s.getCategorie())) {
+                    code.append("\t" + s.getNom() + ": LONG(" + s.getValeur() + ")\n");
+                }
             }
         }
         return code.toString();
@@ -266,7 +270,10 @@ public class Generateur {
         code.append("\tCALL("+a.getValeur()+")\n");
         code.append("\tDEALLOCATE("+a.getFils().size()+")\n");
         if (aValeurDeRetour){
-            code.append("\tPOP(R0)\n");
+            int nb_param = ((Symbole)a.getValeur()).getNb_param();
+            int offsetRetour = -(nb_param + 1) * 4;
+            code.append("\tGETFRAME(" + offsetRetour + ",R0)\n");
+            code.append("\tDEALLOCATE(1)\n");
             code.append("\tPUSH(R0)\n");
         }
         return code.toString();
@@ -274,12 +281,13 @@ public class Generateur {
 
     public String genererRetour(Retour retour){
         StringBuffer code = new StringBuffer();
-        int offset;
+        Symbole s = (Symbole) retour.getValeur();
+        int nb_param = s.getNb_param();
+        int offset = (2 + nb_param + 1) * 4;
         code.append(genererExpression(retour.getLeFils()));
-        offset = 2 + ((Symbole)retour.getValeur()).getNb_param(); // BP
         code.append("\tPOP(R0)\n");
-        code.append("\tPUTFRAME("+offset * 4+", R0)\n");
-        code.append("\tBR(ret_"+retour.getValeur()+")\n");
+        code.append("\tPUTFRAME(" + offset + ",R0)\n");
+        code.append("\tBR(ret_" + retour.getValeur() + ")\n");
         return code.toString();
     }
 

@@ -63,9 +63,9 @@ public class Exemple9 {
         Symbole s1 = new Symbole("main","void","fonction",0,0,0);
         Symbole s2 = new Symbole("f","int","fonction",0,1,0);
         Symbole s3 = new Symbole("a","int","param",0,s2);
-        table.put(s1.getNom(), s1);
-        table.put(s2.getNom(), s2);
-        table.put(s3.getNom(), s3);
+        table.ajouterSymbole(s1);
+        table.ajouterSymbole(s2);
+        table.ajouterSymbole(s3);
 
 
         //Faire pointer les noeuds aux symboles (avec le setter de NoeudObj)

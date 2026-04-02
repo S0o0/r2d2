@@ -14,7 +14,7 @@ public class Exemple1 {
         //Affectation du symbole
         Table table = new Table();
         Symbole s = new Symbole("main","void","fonction",0,0,0);
-        table.put(s.getNom(),s);
+        table.ajouterSymbole(s);
         //Faire pointer les noeuds aux symboles (avec le setter de NoeudObj)
         main.setValeur(s);
 

@@ -81,4 +81,15 @@ public class Symbole {
         }
         return sb.toString();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Symbole s = (Symbole) obj;
+        return nom.equals(s.nom) &&
+                type.equals(s.type) &&
+                categorie.equals(s.categorie);
+    }
 }
