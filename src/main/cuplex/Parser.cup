@@ -78,25 +78,25 @@ programme ::= liste_declarations_globales:ld liste_fonctions:lf
 liste_declarations_globales ::= liste_declarations_globales:ld TYPE_INT IDF:nom POINT_VIRG
     {:
         Symbole s = new Symbole(nom, "int", "global", 0, 0, 0, 0, null);
-        parser.tds.put(nom, s);
+        parser.tds.ajouterSymbole(s);
         RESULT = ld;
     :}
     | liste_declarations_globales:ld TYPE_INT IDF:nom AFF CONST_ENT:val POINT_VIRG
     {:
         Symbole s = new Symbole(nom, "int", "global", val, 0, 0, 0, null);
-        parser.tds.put(nom, s);
+        parser.tds.ajouterSymbole(s);
         RESULT = ld;
     :}
     | TYPE_INT IDF:nom POINT_VIRG
     {:
         Symbole s = new Symbole(nom, "int", "global", 0, 0, 0, 0, null);
-        parser.tds.put(nom, s);
+        parser.tds.ajouterSymbole(s);
         RESULT = new ArrayList<>();
     :}
     | TYPE_INT IDF:nom AFF CONST_ENT:val POINT_VIRG
     {:
         Symbole s = new Symbole(nom, "int", "global", val, 0, 0, 0, null);
-        parser.tds.put(nom, s);
+        parser.tds.ajouterSymbole(s);
         RESULT = new ArrayList<>();
     :}
     ;
@@ -121,7 +121,7 @@ liste_fonctions ::= liste_fonctions:lf fonction:f
 entete_fonction_void ::= TYPE_VOID IDF:nom
     {:
         Symbole sf = new Symbole(nom, "void", "fonction", 0, 0, 0, 0, null);
-        parser.tds.put(nom, sf);
+        parser.tds.ajouterSymbole(sf);
         parser.scopeActuel    = sf;
         parser.nbParamActuel  = 0;
         parser.nbVarLocActuel = 0;
@@ -132,7 +132,7 @@ entete_fonction_void ::= TYPE_VOID IDF:nom
 entete_fonction_int ::= TYPE_INT IDF:nom
     {:
         Symbole sf = new Symbole(nom, "int", "fonction", 0, 0, 0, 0, null);
-        parser.tds.put(nom, sf);
+        parser.tds.ajouterSymbole(sf);
         parser.scopeActuel    = sf;
         parser.nbParamActuel  = 0;
         parser.nbVarLocActuel = 0;
@@ -171,7 +171,7 @@ liste_params ::= params:lp
 params ::= params:lp VIRGULE TYPE_INT IDF:nom
     {:
         Symbole sp = new Symbole(nom, "int", "param", parser.nbParamActuel++, parser.scopeActuel);
-        parser.tds.put(nom, sp);
+        parser.tds.ajouterSymbole(sp);
         lp.add(sp);
         RESULT = lp;
     :}
@@ -179,7 +179,7 @@ params ::= params:lp VIRGULE TYPE_INT IDF:nom
     {:
         ArrayList<Symbole> lp = new ArrayList<>();
         Symbole sp = new Symbole(nom, "int", "param", parser.nbParamActuel++, parser.scopeActuel);
-        parser.tds.put(nom, sp);
+        parser.tds.ajouterSymbole(sp);
         lp.add(sp);
         RESULT = lp;
     :}
@@ -213,13 +213,13 @@ liste_instructions ::= liste_instructions:li instruction:i
 declaration_locale ::= TYPE_INT IDF:nom POINT_VIRG
     {:
         Symbole s = new Symbole(nom, "int", "local", parser.nbVarLocActuel++, parser.scopeActuel);
-        parser.tds.put(nom, s);
+        parser.tds.ajouterSymbole(s);
         RESULT = null;
     :}
     | TYPE_INT IDF:nom AFF CONST_ENT:val POINT_VIRG
     {:
         Symbole s = new Symbole(nom, "int", "local", parser.nbVarLocActuel++, parser.scopeActuel);
-        parser.tds.put(nom, s);
+        parser.tds.ajouterSymbole(s);
         Idf idf = new Idf(s);
         Affectation aff = new Affectation();
         aff.setFilsGauche(idf);
@@ -237,7 +237,7 @@ instruction ::=
         Symbole s = parser.tds.rechercherSymbole(nom);
         if (s == null) {
             s = new Symbole(nom, "int", "global", 0, 0, 0, 0, null);
-            parser.tds.put(nom, s);
+            parser.tds.ajouterSymbole(s);
         }
         Idf idf = new Idf(s);
         Affectation aff = new Affectation();
@@ -260,7 +260,7 @@ instruction ::=
         Symbole s = parser.tds.rechercherSymbole(nom);
         if (s == null) {
             s = new Symbole(nom, "int", "global", 0, 0, 0, 0, null);
-            parser.tds.put(nom, s);
+            parser.tds.ajouterSymbole(s);
         }
         Appel ap = new Appel(s);
         for (Noeud arg : la) ap.ajouterUnFils(arg);
@@ -316,7 +316,7 @@ expression ::=
         Symbole s = parser.tds.rechercherSymbole(nom);
         if (s == null) {
             s = new Symbole(nom, "int", "global", 0, 0, 0, 0, null);
-            parser.tds.put(nom, s);
+            parser.tds.ajouterSymbole(s);
         }
         RESULT = new Idf(s);
     :}
@@ -329,7 +329,7 @@ expression ::=
         Symbole s = parser.tds.rechercherSymbole(nom);
         if (s == null) {
             s = new Symbole(nom, "int", "global", 0, 0, 0, 0, null);
-            parser.tds.put(nom, s);
+            parser.tds.ajouterSymbole(s);
         }
         Appel ap = new Appel(s);
         for (Noeud arg : la) ap.ajouterUnFils(arg);

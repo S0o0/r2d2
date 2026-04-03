@@ -1,13 +1,15 @@
 package fr.ul.miashs.compil.tds;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class Table extends HashMap<String, List<Symbole>>{
 
-    public List<Symbole> rechercherSymbole(String nom) {
-        if (nom == null) return null;
-        return this.get(nom);
+    public Symbole rechercherSymbole(String nom) {
+        List<Symbole> liste = this.get(nom);
+        if (liste == null || liste.isEmpty()) return null;
+        return liste.get(0);
     }
 
     @Override
@@ -24,13 +26,22 @@ public class Table extends HashMap<String, List<Symbole>>{
     }
 
     public void ajouterSymbole(Symbole s) {
-        if (!this.containsKey(s.getNom())) {
-            List<Symbole> liste = new java.util.ArrayList<>();
+        List<Symbole> liste = this.get(s.getNom());
+        if (liste == null) {
+            liste = new java.util.ArrayList<>();
             liste.add(s);
             this.put(s.getNom(), liste);
         } else {
-            List<Symbole> liste = this.get(s.getNom());
-            liste.add(s);
+            boolean exists = false;
+            for (Symbole sym : liste) {
+                if (sym.equals(s)) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) {
+                liste.add(s);
+            }
         }
     }
 }
