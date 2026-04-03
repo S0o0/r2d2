@@ -3,5 +3,4 @@ int j = 20;
 int k;
 int l;
 void main() {
-    ecrire(5);
 }

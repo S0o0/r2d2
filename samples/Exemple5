@@ -1,3 +1,5 @@
+int a = 100;
+int b = 170;
 void main() {
     ecrire(a*2 + (b-5)/3);
 }

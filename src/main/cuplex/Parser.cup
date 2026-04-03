@@ -4,6 +4,7 @@ import java_cup.runtime.*;
 import fr.ul.miashs.compil.arbre.*;
 import fr.ul.miashs.compil.tds.*;
 import java.util.ArrayList;
+import fr.ul.miashs.compil.traduction.Generateur;
 
 /* ── Champs partagés dans le parser ──────────────────────────────── */
 parser code {:
@@ -58,6 +59,9 @@ programme ::= liste_declarations_globales:ld liste_fonctions:lf
         for (Noeud f : lf) prog.ajouterUnFils(f);
         System.out.println("=== Arbre abstrait ===");
         TxtAfficheur.afficher(prog);
+        Generateur generateur = new Generateur();
+        System.out.println("\n=== Code assembleur ===");
+        System.out.println((generateur.genererProgramme(prog,parser.tds)));
         System.out.println("\n=== Table des symboles ===");
         System.out.println(parser.tds);
         RESULT = prog;
@@ -68,6 +72,9 @@ programme ::= liste_declarations_globales:ld liste_fonctions:lf
         for (Noeud f : lf) prog.ajouterUnFils(f);
         System.out.println("=== Arbre abstrait ===");
         TxtAfficheur.afficher(prog);
+        Generateur generateur = new Generateur();
+        System.out.println("\n=== Code assembleur ===");
+        System.out.println((generateur.genererProgramme(prog,parser.tds)));
         System.out.println("\n=== Table des symboles ===");
         System.out.println(parser.tds);
         RESULT = prog;
