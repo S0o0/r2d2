@@ -59,6 +59,32 @@ Utiliser un IDE qui intègre Maven (par exemple Eclipse)
 3. Importer le projet dans votre IDE (pour Eclipse : `File>Import...>Existing Maven Project...`
 4. Installer dans le repository local (pour Eclipse: `Run As...>Maven Install`
 
+## Exécution du projet
+
+Pour compiler et exécuter correctement le projet avec Maven, suivez les étapes suivantes :
+
+1. Nettoyer le projet :
+```
+mvn clean
+```
+
+2. Compiler le code source :
+```
+mvn compile
+```
+
+3. Générer le package (JAR) :
+```
+mvn package
+```
+
+4. Installer le projet dans le repository local :
+```
+mvn install
+```
+
+Ces commandes permettent respectivement de nettoyer les anciens fichiers, compiler le projet, générer l’artefact et le rendre disponible pour d’autres projets Maven.
+
 ## Utilisation
 
 Dans un projet Maven, ajouter la dépendance suivante dans le fichier `pom.xml` :
