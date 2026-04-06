@@ -63,7 +63,7 @@ ESPACE      = [ \t\r\n]+
 <YYINITIAL> "*"                 { return symbol(Sym.MUL);   }
 <YYINITIAL> "/"                 { return symbol(Sym.DIV);   }
 
-//Opérateurs de comparaison (2 car. avant 1 car.)
+//Opérateurs de comparaison (2 caractères avant 1 caractère)
 <YYINITIAL> ">="                { return symbol(Sym.SUP_EG); }
 <YYINITIAL> "<="                { return symbol(Sym.INF_EG); }
 <YYINITIAL> "=="                { return symbol(Sym.EGAL);   }

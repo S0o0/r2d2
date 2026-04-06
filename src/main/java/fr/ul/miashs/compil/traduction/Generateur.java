@@ -26,7 +26,7 @@ public class Generateur {
         Idf i = (Idf) aff.getFilsGauche();
         Symbole s = (Symbole) i.getValeur();
         int offset;
-        // Suivant les types (global, param et local)
+        // Génération différente selon la catégorie du symbole (global, paramètre ou local)
         switch (s.getCategorie()) {
             case "global":
                 code.append("\tST(R0, " + s.getNom() + ")\n");
@@ -49,6 +49,7 @@ public class Generateur {
      */
     public String genererExpression(Noeud expr) {
         StringBuffer code = new StringBuffer();
+        // Génération du code en fonction du type du noeud (constante, identifiant, opération...)
         switch (expr.getCat()){
             case CONST:
                 Const c = (Const) expr;
@@ -59,6 +60,7 @@ public class Generateur {
                 Idf i = (Idf) expr;
                 Symbole s = (Symbole) i.getValeur();
                 int offset;
+                // Accès à la valeur selon la catégorie du symbole
                 switch (s.getCategorie()){
                     case "global":
                         code.append("\tLD(" + s.getNom() + ", R0)\n");
@@ -75,7 +77,7 @@ public class Generateur {
                         code.append("\tPUSH(R0)\n");
                         break;
                 }
-                
+
                 break;
             case PLUS:
                 Plus p = (Plus) expr;
@@ -148,7 +150,8 @@ public class Generateur {
         code.append("\tBR(debut)\n");
         code.append(genererData(tds));
         code.append("debut:\n");
-        // retourne la dernière fonction soit main quand il y en a plusieurs
+        // Récupération de la fonction principale (dernière déclarée = main)
+        // Retourne la dernière fonction soit main quand il y en a plusieurs
         Fonction fction = (Fonction) programme.getFils().get(programme.getFils().size()-1);
         code.append("\tCALL(" + fction.getValeur() + ")\n");
         code.append(("\tHALT()\n"));
@@ -190,7 +193,8 @@ public class Generateur {
         code.append("\tPUSH(LP)\n");
         code.append("\tPUSH(BP)\n");
         code.append("\tMOVE(SP,BP)\n");
-        // On ex1 en symbole pour avoir accès à nb_var_loc
+        // Allocation de l’espace pour les variables locales
+        // On génère en symbole pour avoir accès à nb_var_loc
         code.append("\tALLOCATE("+((Symbole)fonction.getValeur()).getNbVarLoc()+")\n");
         for  (Noeud fils : fonction.getFils()) {
             code.append(genererInstruction(fils));
@@ -212,6 +216,7 @@ public class Generateur {
      */
     public String genererInstruction(Noeud instruction){
         StringBuffer code = new StringBuffer();
+        // Vérifie le type d’instruction et délègue à la bonne méthode de génération
         if ( instruction instanceof Affectation || instruction instanceof Appel || instruction instanceof Ecrire
         || instruction instanceof Si ||instruction instanceof TantQue || instruction instanceof Retour){
             switch(instruction.getCat()){
@@ -246,6 +251,11 @@ public class Generateur {
     }
 
 
+    /**
+     * Générer le code pour une écriture (affichage)
+     * @param e : noeud d’écriture
+     * @return code généré
+     */
     public String genererEcriture(Ecrire e){
         StringBuffer code = new StringBuffer();;
         code.append(genererExpression(e.getLeFils()));
@@ -255,12 +265,18 @@ public class Generateur {
     }
 
 
+    /**
+     * Générer le code pour un appel de fonction
+     * @param a : noeud d’appel
+     * @return code généré
+     */
     public String genererAppel(Appel a){
         StringBuffer code = new StringBuffer();
         boolean aValeurDeRetour = a.getValeur() != null
                 && a.getValeur() instanceof Symbole
                 && !"void".equals(((Symbole)a.getValeur()).getType());
 
+        // Si la fonction retourne une valeur, on réserve de la place pour celle-ci
         if (aValeurDeRetour){
             code.append("\tALLOCATE(1)\n");
         }
@@ -279,9 +295,15 @@ public class Generateur {
         return code.toString();
     }
 
+    /**
+     * Générer le code pour un retour de fonction
+     * @param retour : noeud de retour
+     * @return code généré
+     */
     public String genererRetour(Retour retour){
         StringBuffer code = new StringBuffer();
         Symbole s = (Symbole) retour.getValeur();
+        // Calcul de l’offset pour placer la valeur de retour dans la pile
         int nb_param = s.getNb_param();
         int offset = (2 + nb_param + 1) * 4;
         code.append(genererExpression(retour.getLeFils()));
@@ -291,10 +313,15 @@ public class Generateur {
         return code.toString();
     }
 
+    /**
+     * Générer le code pour une structure conditionnelle SI
+     * @param si : noeud conditionnel
+     * @return code généré
+     */
     public String genererSi(Si si){
         StringBuffer code = new StringBuffer();
         code.append("si_"+si.getValeur()+" :\n");
-        // On ex1 la condition car getCondition retourne un Noeud
+        // On génère la condition car getCondition retourne un Noeud
         code.append(genererCondition(si.getCondition()));
         code.append("\tPOP(R0)\n");
         code.append("\tBF(R0,sinon_"+si.getValeur()+")\n");
@@ -306,6 +333,11 @@ public class Generateur {
         return code.toString();
     }
 
+    /**
+     * Générer le code pour un bloc d’instructions
+     * @param bloc : noeud bloc
+     * @return code généré
+     */
     public String genererBloc (Bloc bloc){
         StringBuffer code = new StringBuffer();
         for (Noeud fils : bloc.getFils()) {
@@ -314,8 +346,14 @@ public class Generateur {
         return code.toString();
     }
 
+    /**
+     * Générer le code pour une condition (comparaison)
+     * @param condition : noeud de condition
+     * @return code généré
+     */
     public String genererCondition(Noeud condition){
         StringBuffer code = new StringBuffer();
+        // Génération du code selon le type de comparaison (>, <, ==...)
         // 1) cas où supérieur
         if (condition instanceof Superieur){
             code.append(genererExpression(((Superieur) condition).getFilsGauche()));
@@ -334,6 +372,7 @@ public class Generateur {
             code.append("\tCMPLT(R2,R1,R3)\n");
             code.append("\tPUSH(R3)\n");
         }
+        // 3) cas où égal
         if (condition instanceof Egal){
             code.append(genererExpression(((Egal) condition).getFilsGauche()));
             code.append(genererExpression(((Egal) condition).getFilsDroit()));
@@ -342,6 +381,7 @@ public class Generateur {
             code.append("\tCMPEQ(R2,R1,R3)\n");
             code.append("\tPUSH(R3)\n");
         }
+        // 4) cas où différent
         if (condition instanceof Different){
             code.append(genererExpression(((Different) condition).getFilsGauche()));
             code.append(genererExpression(((Different) condition).getFilsDroit()));
@@ -351,6 +391,7 @@ public class Generateur {
             code.append("\tCMPEQC(R3,0,R3)\n");
             code.append("\tPUSH(R3)\n");
         }
+        // 5) cas où inférieur ou égal
         if (condition instanceof InferieurEgal){
             code.append(genererExpression(((InferieurEgal) condition).getFilsGauche()));
             code.append(genererExpression(((InferieurEgal) condition).getFilsDroit()));
@@ -359,6 +400,7 @@ public class Generateur {
             code.append("\tCMPLE(R2,R1,R3)\n");
             code.append("\tPUSH(R3)\n");
         }
+        // 6) cas où supérieur ou égal
         if (condition instanceof SuperieurEgal){
             code.append(genererExpression(((SuperieurEgal) condition).getFilsGauche()));
             code.append(genererExpression(((SuperieurEgal) condition).getFilsDroit()));
@@ -370,9 +412,15 @@ public class Generateur {
         return  code.toString();
     }
 
+    /**
+     * Générer le code pour une boucle Tant Que
+     * @param tq : noeud de boucle
+     * @return code généré
+     */
     public String genererTq (TantQue tq){
         StringBuffer code = new StringBuffer();
         code.append("tq_"+tq.getValeur()+" :\n");
+        // Génération de la condition de la boucle
         code.append(genererCondition(tq.getCondition()));
         code.append("\tPOP(R1)\n");
         code.append("\tBF(R1, ftq_"+tq.getValeur()+")\n");
@@ -383,16 +431,3 @@ public class Generateur {
         return code.toString();
     }
 }
-
-
-//Exemple 7 (en C)
-//int a = 1;
-//int b = 2;
-//int x;
-//
-//void main(){
-//    if (a > b){
-//        x = 1000;
-//    }else{
-//        x = 2000;
-//    }

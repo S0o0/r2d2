@@ -6,7 +6,7 @@ import fr.ul.miashs.compil.tds.*;
 import java.util.ArrayList;
 import fr.ul.miashs.compil.traduction.Generateur;
 
-/* ── Champs partagés dans le parser ──────────────────────────────── */
+/* Champs partagés dans le parser  */
 parser code {:
     public Table tds = new Table();
     public Symbole scopeActuel = null;
@@ -14,7 +14,7 @@ parser code {:
     public int nbVarLocActuel = 0;
 :};
 
-/* ── Déclaration des terminaux (tokens du lexer) ─────────────────── */
+/* Déclaration des terminaux (tokens du lexer) */
 terminal            TYPE_INT, TYPE_VOID;
 terminal            SI, SINON, TANTQUE, RETOUR;
 terminal            ECRIRE, LIRE;
@@ -26,7 +26,7 @@ terminal            VIRGULE, POINT_VIRG;
 terminal Integer    CONST_ENT;
 terminal String     IDF;
 
-/* ── Déclaration des non-terminaux ───────────────────────────────── */
+/* Déclaration des non-terminaux */
 non terminal Prog                   programme;
 non terminal ArrayList<Noeud>       liste_declarations_globales;
 non terminal ArrayList<Noeud>       liste_fonctions;
@@ -44,15 +44,16 @@ non terminal Bloc                   bloc;
 non terminal ArrayList<Noeud>       liste_args;
 non terminal ArrayList<Noeud>       args;
 
-/* ── Précédences (du moins au plus prioritaire) ──────────────────── */
+/* Précédences (du moins au plus prioritaire) */
 precedence left PLUS, MOINS;
 precedence left MUL, DIV;
 
-/* ============================================================
+/*
  * Grammaire
- * ============================================================ */
+ *
+ */
 
-/* ── Programme ───────────────────────────────────────────────────── */
+/*  Programme */
 programme ::= liste_declarations_globales:ld liste_fonctions:lf
     {:
         Prog prog = new Prog();
@@ -81,7 +82,7 @@ programme ::= liste_declarations_globales:ld liste_fonctions:lf
     :}
     ;
 
-/* ── Déclarations globales ───────────────────────────────────────── */
+/* Déclarations globales */
 liste_declarations_globales ::= liste_declarations_globales:ld TYPE_INT IDF:nom POINT_VIRG
     {:
         Symbole s = new Symbole(nom, "int", "global", 0, 0, 0, 0, null);
@@ -108,7 +109,7 @@ liste_declarations_globales ::= liste_declarations_globales:ld TYPE_INT IDF:nom 
     :}
     ;
 
-/* ── Liste de fonctions ──────────────────────────────────────────── */
+/*  Liste de fonctions  */
 liste_fonctions ::= liste_fonctions:lf fonction:f
     {:
         lf.add(f);
@@ -122,9 +123,9 @@ liste_fonctions ::= liste_fonctions:lf fonction:f
     :}
     ;
 
-/* ── Entêtes de fonctions : règles séparées pour initialiser le scope
+/* Entêtes de fonctions : règles séparées pour initialiser le scope
       AVANT de parser les params et le corps.
-      C'est le remplacement des mid-rule actions. ──────────────────── */
+      C'est le remplacement des mid-rule actions */
 entete_fonction_void ::= TYPE_VOID IDF:nom
     {:
         Symbole sf = new Symbole(nom, "void", "fonction", 0, 0, 0, 0, null);
@@ -147,7 +148,7 @@ entete_fonction_int ::= TYPE_INT IDF:nom
     :}
     ;
 
-/* ── Fonctions ───────────────────────────────────────────────────── */
+/* Fonctions */
 fonction ::= entete_fonction_void:nom PAR_OUV liste_params:lp PAR_FER
              ACCOLADE_OUV liste_instructions:li ACCOLADE_FER
     {:
@@ -168,7 +169,7 @@ fonction ::= entete_fonction_void:nom PAR_OUV liste_params:lp PAR_FER
     :}
     ;
 
-/* ── Paramètres ──────────────────────────────────────────────────── */
+/* Paramètres  */
 liste_params ::= params:lp
     {:  RESULT = lp; :}
     | /* vide */
@@ -192,7 +193,7 @@ params ::= params:lp VIRGULE TYPE_INT IDF:nom
     :}
     ;
 
-/* ── Bloc ────────────────────────────────────────────────────────── */
+/* Bloc  */
 bloc ::= ACCOLADE_OUV liste_instructions:li ACCOLADE_FER
     {:
         Bloc b = new Bloc();
@@ -201,7 +202,7 @@ bloc ::= ACCOLADE_OUV liste_instructions:li ACCOLADE_FER
     :}
     ;
 
-/* ── Liste d'instructions ────────────────────────────────────────── */
+/*  Liste d'instructions */
 liste_instructions ::= liste_instructions:li instruction:i
     {:
         li.add(i);
@@ -216,7 +217,7 @@ liste_instructions ::= liste_instructions:li instruction:i
     {:  RESULT = new ArrayList<>(); :}
     ;
 
-/* ── Déclaration locale ──────────────────────────────────────────── */
+/* Déclaration locale  */
 declaration_locale ::= TYPE_INT IDF:nom POINT_VIRG
     {:
         Symbole s = new Symbole(nom, "int", "local", parser.nbVarLocActuel++, parser.scopeActuel);
@@ -235,7 +236,7 @@ declaration_locale ::= TYPE_INT IDF:nom POINT_VIRG
     :}
     ;
 
-/* ── Instructions ────────────────────────────────────────────────── */
+/*  Instructions  */
 instruction ::=
 
     /* Affectation */
@@ -312,7 +313,7 @@ instruction ::=
     :}
     ;
 
-/* ── Expressions ─────────────────────────────────────────────────── */
+/* Expressions */
 expression ::=
 
     CONST_ENT:v
@@ -379,7 +380,7 @@ expression ::=
     {:  RESULT = e; :}
     ;
 
-/* ── Conditions ──────────────────────────────────────────────────── */
+/* Conditions */
 condition ::=
     expression:g SUP expression:d
     {:  Superieur s = new Superieur(); s.setFilsGauche(g); s.setFilsDroit(d); RESULT = s; :}
@@ -400,7 +401,7 @@ condition ::=
     {:  Different s = new Different(); s.setFilsGauche(g); s.setFilsDroit(d); RESULT = s; :}
     ;
 
-/* ── Arguments d'appel ───────────────────────────────────────────── */
+/* Arguments d'appel */
 liste_args ::= args:la
     {:  RESULT = la; :}
     | /* vide */

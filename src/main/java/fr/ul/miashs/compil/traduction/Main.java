@@ -1,7 +1,7 @@
 package fr.ul.miashs.compil.traduction;
 
 import fr.ul.miashs.compil.arbre.*;
-
+// Test lié au début de l'étape 1 qui est maintenant obsolète
 public class Main {
     public static void main(String[] args) {
         // créer la tds
